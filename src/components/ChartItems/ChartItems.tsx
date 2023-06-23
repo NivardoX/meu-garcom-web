@@ -16,9 +16,9 @@ export type ChartItemsProperty<T> = {
 
 type ChartItemsProps<T> = {
   values: ChartItemsProperty<T>
-  expires: boolean
+  expires?: boolean
   data: T
-  onEdit: () => void
+  onEdit?: () => void
   onRemove?: () => void
   onExpires?: () => void
 }

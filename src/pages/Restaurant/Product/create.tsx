@@ -71,14 +71,17 @@ export function CreateProduct() {
     if (productImage) {
       formData.append("image", productImage);
     }
-    if (storageCategory === `1`) {
+    if (storageCategory === '1') {
       console.log(storageCategory);
-      formData.append("availabilityType", `AVIABILITY`);
-    } else {
       formData.append("availabilityType", `QUANTITY`);
+    } else {
+      console.log(storageCategory);
+      formData.append("availabilityType", `AVAILABILITY`);
     }
 
     try {
+      console.log('' + formData);
+      
       await api.post("/products", formData);
 
       handleRequestSuccess("Produto Criado com sucesso!");

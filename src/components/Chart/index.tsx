@@ -6,8 +6,8 @@ import { QrCodeButton } from '../../pages/Restaurant/Table/components/QrCodeButt
 interface ChartProps {
   headingTitle: string
   children: ReactNode
-  href: string
-  hasCreateButton: boolean
+  href?: string
+  hasCreateButton?: boolean
   openModal?: () => void
   onPress?: () => void
 }

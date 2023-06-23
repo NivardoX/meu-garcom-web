@@ -16,7 +16,7 @@ type ModalProps = {
   description?: string;
   children?: ReactNode;
   buttonTitle?: string;
-  onClick: () => void;
+  onClick?: () => void;
   onOpen?: () => void;
   onClose: () => void;
 };

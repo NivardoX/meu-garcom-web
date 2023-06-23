@@ -23,6 +23,7 @@ export type GetProductsResponse = {
       restaurantId: string
       imageUrl: string
       priceInCents: number
+      availabilityType: string,
       availableAmount: number
       estimatedMinutesToPrepare: number
       category: {
@@ -75,6 +76,7 @@ export function Product() {
           imageUrl: product.imageUrl,
           priceInCents: product.priceInCents,
           availableAmount: product.availableAmount,
+          availabilityType: product.availabilityType,
           estimatedMinutesToPrepare: product.estimatedMinutesToPrepare,
           categoryName: product.category.name,
         }

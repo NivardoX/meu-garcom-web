@@ -12,8 +12,8 @@ let failedRequestsQueue: Array<PromiseType> = []
 export function setupAPIClient() {
   const api = axios.create({
     baseURL:
-      'http://localhost:3333',
-      //'http://meu-garcom-load-balancer-684548247.us-east-1.elb.amazonaws.com',
+      //'http://localhost:3333',
+      'http://meu-garcom-load-balancer-684548247.us-east-1.elb.amazonaws.com',
     headers: {
       Authorization: `Bearer ${Cookies.get('meu-garcom-web.token')}`,
     },

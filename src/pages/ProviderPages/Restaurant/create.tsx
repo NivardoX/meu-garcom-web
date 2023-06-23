@@ -7,7 +7,7 @@ import { FormButton } from "../../../components/Form/FormButton";
 import { Input } from "../../../components/Input";
 import { apiProvider } from "../../../service/apiProvider";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import React, { useState } from "react";
 
 export type CreateRestaurantProps = {
   restaurantName: string;
@@ -118,7 +118,7 @@ export function CreateRestaurant() {
                 name="maxTables"
                 label="Numero de mesas"
                 type="number"
-                onChange={e => setMaxTables(e.target.value)}
+                onChange={(e: any) => setMaxTables(e.target.value)}
                 register={register}
               />
             </SimpleGrid>

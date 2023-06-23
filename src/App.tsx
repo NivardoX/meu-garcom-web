@@ -1,14 +1,13 @@
 import { ChakraProvider } from '@chakra-ui/react'
 import { defaultTheme } from './styles/themes/default'
 import { GlobalStyles } from './styles/global'
-import * as AuthContext  from './context/AuthContext'
+import * as AuthContext  from './Context/AuthContext'
 import { AuthContextProvider } from './Context/AuthProviderContext'
 import { Router } from './routes'
 import { CookiesProvider } from 'react-cookie'
 import { BrowserRouter } from 'react-router-dom'
-import { AppToastProvider } from './context/AppToast'
-import { TablesProvider } from './context/TablesContext'
-import SocketContext, { SocketProvider } from './context/Socket/Socket'
+import { AppToastProvider } from './Context/AppToast'
+import { TablesProvider } from './Context/TablesContext'
 
 export function App() {
   return (

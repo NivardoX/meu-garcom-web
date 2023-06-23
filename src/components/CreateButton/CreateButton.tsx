@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 export type CreateButtonProps = {
   title: string;
-  href: string;
+  href?: string;
   color?: string;
   onPress?: () => void;
 };

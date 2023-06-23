@@ -14,7 +14,7 @@ const UpdateCategoryValidationSchema = zod.object({
 })
 
 export type UpdateCategoryProps = zod.infer<
-  typeof CreateCategoryValidationSchema
+  typeof UpdateCategoryValidationSchema
 >
 
 export function UpdateCategory() {
@@ -47,7 +47,7 @@ export function UpdateCategory() {
       <CreateContent headingTitle="Editar Categoria" size="small">
         <form onSubmit={handleSubmit(handleUpdateCategory)}>
           <Input name="name" label="Nome da Categoria" register={register} />
-          <FormButton buttonSubmitTitle="Editar" />
+          <FormButton isDisable={false} buttonSubmitTitle="Editar" />
         </form>
       </CreateContent>
     </Box>

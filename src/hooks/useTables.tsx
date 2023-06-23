@@ -1,4 +1,4 @@
-import { TablesContext } from '../context/TablesContext'
+import { TablesContext } from '../Context/TablesContext'
 import { useContext } from 'react'
 
 export function useTables() {

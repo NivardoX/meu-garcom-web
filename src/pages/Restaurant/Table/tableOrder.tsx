@@ -30,7 +30,7 @@ export function TableOrder() {
   const table = tables.find((table) => table.id === tableId)
 
   if (!table) {
-    return
+    return <></>
   }
 
   // async function handleAssignWaiterToTable() {
@@ -56,7 +56,7 @@ export function TableOrder() {
         handleRequestSuccess('Mesa removida!')
         
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
       if (error.response.data.message[0] === 'tableSessionId must be a UUID') {
         console.log(error.response.data.message[0]);
