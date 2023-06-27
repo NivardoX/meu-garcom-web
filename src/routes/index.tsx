@@ -8,7 +8,7 @@ export function Router() {
   const { providerSession } = AuthProvider.useAuth()
 
   function redirectByUserType() {
-    if (restaurantSession) {
+    if (!restaurantSession) {
       return <RestaurantRouter />
     }
     // TODO: Corrigir o contexto de provider
