@@ -7,16 +7,13 @@ export function Router() {
   const { restaurantSession } = useAuth()
   const { providerSession } = AuthProvider.useAuth()
 
-  function redirectByUserType() {
-    if (!restaurantSession) {
-      return <RestaurantRouter />
-    }
-    // TODO: Corrigir o contexto de provider
-    if (providerSession) {
-      return <ProviderRouter provider={providerSession} />
-    }
-
+  if (restaurantSession) {
+    return <RestaurantRouter />
+  }
+  // TODO: Corrigir o contexto de provider
+  if (providerSession) {
+    return <ProviderRouter provider={providerSession} />
+  } else {
     return <AuthRouter />
   }
-  return redirectByUserType()
 }

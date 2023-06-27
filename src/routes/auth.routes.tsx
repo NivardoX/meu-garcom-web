@@ -6,8 +6,8 @@ import { SignInProvider } from '../pages/ProviderPages/SignInProvider'
 export function AuthRouter() {
   return (
     <Routes>
-      <Route path="/provider" element={<SignIn />} />
-      <Route path="/" element={<SignInProvider />} />
+      <Route path="/" element={<SignIn />} />
+      <Route path="/provider" element={<SignInProvider />} />
     </Routes>
   )
 }
