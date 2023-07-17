@@ -19,22 +19,22 @@ const chartProperty: ChartItemsProperty<RestaurantProps> = {
   expiresAt: { label: 'Data de Expiração', format: 'date' },
 }
 
-
 export function Restaurant() {
   const [itemData, setItemData] = useState<RestaurantProps[]>([])
   const navigate = useNavigate()
-  
+
   useEffect(() => {
-    apiProvider.get('restaurant?page=1').then((response) => {
-      setItemData(response.data.restaurants)
-    })
-    .catch((error) => {
-      console.log(error);
-      
-    })
-  },[])
+    apiProvider
+      .get('restaurant?page=1')
+      .then((response) => {
+        setItemData(response.data.restaurants)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }, [])
   const handleOpenUpdateExpires = (restaurant: any) => {
-    navigate('updateExpires', { state: restaurant})
+    navigate('updateExpires', { state: restaurant })
   }
   const handleOpenEditRestaurant = () => {
     navigate('update')
@@ -45,7 +45,14 @@ export function Restaurant() {
         <ChartContent headers={chartProperty}>
           {itemData.map((element, index) => {
             return (
-              <ChartItems values={chartProperty} data={element} key={index} expires={true} onEdit={() => handleOpenEditRestaurant()} onExpires={() => handleOpenUpdateExpires(element)}/>
+              <ChartItems
+                values={chartProperty}
+                data={element}
+                key={index}
+                expires={true}
+                onEdit={() => handleOpenEditRestaurant()}
+                onExpires={() => handleOpenUpdateExpires(element)}
+              />
             )
           })}
         </ChartContent>

@@ -24,16 +24,14 @@ type ChartItemsProps<T> = {
 }
 
 export function ChartItems<T>(props: ChartItemsProps<T>) {
-  useEffect(() => {
-    
-  },[])
+  useEffect(() => {}, [])
   const propValues = Object.entries(props.values) as [
     keyof T,
     ChartItemsFormat,
   ][]
-  
+
   const chartValues = propValues.map(([key, value], index) => {
-    console.log(value);
+    console.log(value)
     return (
       <Td textColor="gray.300" fontWeight="bold" key={index}>
         {value.format === 'currency'
@@ -65,28 +63,31 @@ export function ChartItems<T>(props: ChartItemsProps<T>) {
           >
             Editar
           </Button>
-          { props.expires? <Button
-            as="a"
-            size="sm"
-            fontSize="sm"
-            colorScheme="orange"
-            leftIcon={<Icon as={FaClock} color="white" fontSize="18" />}
-            marginLeft={2}
-            onClick={props.onExpires}
-          >
-            Expiração
-          </Button>
-          : <Button
-          as="a"
-          size="sm"
-          fontSize="sm"
-          colorScheme="red"
-          leftIcon={<Icon as={FaRegTrashAlt} color="white" fontSize="18" />}
-          marginLeft={2}
-          onClick={props.onRemove}
-        >
-          Excluir
-        </Button>}
+          {props.expires ? (
+            <Button
+              as="a"
+              size="sm"
+              fontSize="sm"
+              colorScheme="orange"
+              leftIcon={<Icon as={FaClock} color="white" fontSize="18" />}
+              marginLeft={2}
+              onClick={props.onExpires}
+            >
+              Expiração
+            </Button>
+          ) : (
+            <Button
+              as="a"
+              size="sm"
+              fontSize="sm"
+              colorScheme="red"
+              leftIcon={<Icon as={FaRegTrashAlt} color="white" fontSize="18" />}
+              marginLeft={2}
+              onClick={props.onRemove}
+            >
+              Excluir
+            </Button>
+          )}
         </Td>
       </Tr>
     </Tbody>

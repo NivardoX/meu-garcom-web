@@ -1,3 +1,3 @@
-import { setupAPIProvider } from "./axios";
+import { setupAPIProvider } from './axios'
 
 export const apiProvider = setupAPIProvider()

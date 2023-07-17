@@ -6,14 +6,25 @@ import { ExpiresRestaurant } from '../../pages/ProviderPages/Restaurant/updateEx
 import { DefaultLayout } from '../../layouts/DefaultLayout'
 
 export function ProviderRouter(props: any) {
-  
   return (
     <Routes>
-      <Route path="/provider/" element={<DefaultLayout provider={props.provider}/>}>
+      <Route
+        path="/provider/"
+        element={<DefaultLayout provider={props.provider} />}
+      >
         <Route path="/provider/restaurant/" element={<Restaurant />} />
-        <Route path="/provider/restaurant/create/" element={<CreateRestaurant />} />
-        <Route path="/provider/restaurant/update" element={<UpdateRestaurant />} />
-        <Route path="/provider/restaurant/updateExpires" element={<ExpiresRestaurant />} />
+        <Route
+          path="/provider/restaurant/create/"
+          element={<CreateRestaurant />}
+        />
+        <Route
+          path="/provider/restaurant/update"
+          element={<UpdateRestaurant />}
+        />
+        <Route
+          path="/provider/restaurant/updateExpires"
+          element={<ExpiresRestaurant />}
+        />
       </Route>
     </Routes>
   )
