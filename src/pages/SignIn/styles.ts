@@ -1,11 +1,11 @@
-import styled from "styled-components";
+import styled from 'styled-components'
 
 export const SignInContainer = styled.div`
   display: flex;
   width: 100vw;
   height: 100vh;
-  background-image: url("https://img.freepik.com/free-vector/restaurant-symbols-seamless-pattern-doodle-sketch_1284-12804.jpg?w=1380&t=st=1685648460~exp=1685649060~hmac=ab562cafac6049ce479ef167a36b72bab20b86581a29dd3836596d8ca15a699c");
-`;
+  background-image: url('https://img.freepik.com/free-vector/restaurant-symbols-seamless-pattern-doodle-sketch_1284-12804.jpg?w=1380&t=st=1685648460~exp=1685649060~hmac=ab562cafac6049ce479ef167a36b72bab20b86581a29dd3836596d8ca15a699c');
+`
 
 export const SignInGeneralContent = styled.div`
   display: flex;
@@ -15,7 +15,7 @@ export const SignInGeneralContent = styled.div`
   background-color: #2e1413;
   border-radius: 24px;
   align-items: center;
-`;
+`
 
 export const SignInContent = styled.div`
   display: flex;
@@ -25,7 +25,7 @@ export const SignInContent = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
-`;
+`
 
 export const WelcomeText = styled.span`
   font-size: 52px;
@@ -35,7 +35,7 @@ export const WelcomeText = styled.span`
   margin-bottom: 6.5rem;
 
   color: #fff;
-`;
+`
 
 export const SignInButton = styled.button`
   align-self: center;
@@ -53,11 +53,14 @@ export const SignInButton = styled.button`
   font-size: 18px;
   font-weight: bold;
   color: #000;
-`;
+  :hover {
+    background-color: #c5c5c5;
+    transition: 0.3s;
+  }
+`
 
 export const SignInFormContent = styled.form`
   display: flex;
   flex-direction: column;
   width: 70%;
-`;
-
+`

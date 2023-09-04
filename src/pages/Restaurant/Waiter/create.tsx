@@ -8,6 +8,7 @@ import * as zod from 'zod'
 import { api } from '../../../service/apiClient'
 import { useAppToast } from '../../../hooks/useAppToast'
 import { useNavigate } from 'react-router-dom'
+import { InputPassword } from '../../../components/Input/Password'
 
 export type CreateWaiterProps = {
   waiterUserName: string
@@ -45,6 +46,9 @@ export function CreateWaiter() {
   const isSubmitDisabled: boolean = !observerContentForm
 
   const handleCreateWaiter = async ({ ...props }: CreateWaiterProps) => {
+    if (props.waiterConfirmPassword !== props.waiterPassword) {
+      return handleRequestError('', 'As senhas devem ser iguais')
+    }
     try {
       const response = await api.post('/waiters', {
         name: props.waiterName,
@@ -79,13 +83,13 @@ export function CreateWaiter() {
             placeHolder="Informe o email do garçom"
             register={register}
           />
-          <Input
+          <InputPassword
             name="waiterPassword"
             label="Senha do garçom"
             placeHolder="Informe a senha do garçom"
             register={register}
           />
-          <Input
+          <InputPassword
             name="waiterConfirmPassword"
             label="Confirmar senha"
             placeHolder="Confirme a senha digitada no campo anterior"

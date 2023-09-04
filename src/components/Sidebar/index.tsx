@@ -5,7 +5,7 @@ import {
   SideBarName,
   SideBarOptionContent,
 } from './styles'
-import LogoImage from '../../assets/Logo.svg'
+import LogoImage from '../../assets/LogoBg.png'
 import { IoFastFoodOutline } from 'react-icons/io5'
 import { RxDashboard, RxPerson } from 'react-icons/rx'
 import { TbTie } from 'react-icons/tb'

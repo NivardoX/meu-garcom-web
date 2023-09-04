@@ -23,7 +23,7 @@ export type GetProductsResponse = {
       restaurantId: string
       imageUrl: string
       priceInCents: number
-      availabilityType: string,
+      availabilityType: string
       availableAmount: number
       estimatedMinutesToPrepare: number
       category: {
@@ -44,7 +44,12 @@ export type ProductProps = {
   priceInCents: number
   availableAmount: number
   estimatedMinutesToPrepare: number
-  categoryName: string
+  categoryName?: string
+  category: {
+    id: string
+    name: string
+    restaurantId: string
+  }
 }
 
 const chartProperty: ChartItemsProperty<ProductProps> = {
@@ -64,10 +69,8 @@ export function Product() {
     setLoadingProducts(true)
     try {
       const response = await api.get<GetProductsResponse>(`/products?page=1`)
-
-      console.log('response PRODUCT =>', response.data)
+      console.log(response)
       const products: ProductProps[] = response.data.products.map((product) => {
-        
         return {
           id: product.id,
           name: product.name,
@@ -78,7 +81,8 @@ export function Product() {
           availableAmount: product.availableAmount,
           availabilityType: product.availabilityType,
           estimatedMinutesToPrepare: product.estimatedMinutesToPrepare,
-          categoryName: product.category.name,
+          categoryName: product.category?.name,
+          category: product.category,
         }
       })
       setRestaurantProduct(products)
@@ -91,13 +95,15 @@ export function Product() {
 
   // TODO: delete dos produtos ainda não implementado na APi
 
-  // const handleRemoveProduct = async () => {
-  //   try {
-
-  //   } catch (error) {
-
-  //   }
-  // }
+  const handleRemoveProduct = async (id) => {
+    try {
+      setLoadingProducts(true)
+      await api.delete(`/products/${id}`)
+      getAllRestaurantProduct()
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const handleOpenUpdateProduct = (product: ProductProps) => {
     navigate('/restaurant/product/update', { state: { product } })
@@ -133,6 +139,7 @@ export function Product() {
                   data={product}
                   key={productIndex}
                   onEdit={() => handleOpenUpdateProduct(product)}
+                  onRemove={() => handleRemoveProduct(product.id)}
                 />
               )
             })}

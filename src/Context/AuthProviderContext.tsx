@@ -1,60 +1,60 @@
-import { createContext, ReactNode, useEffect, useState } from "react";
-import Cookies from "js-cookie";
+import { createContext, ReactNode, useEffect, useState } from 'react'
+import Cookies from 'js-cookie'
 
-import { SessionInfo } from "../@types/Restaurant/user";
-import { api } from "../service/apiClient";
-import { SignInProps } from "../pages/SignIn";
-import { SignInProviderProps } from "../pages/ProviderPages/SignInProvider";
-import { ProviderInfo } from "../@types/Provider/provider";
-import { differenceInMinutes } from "date-fns";
-import { useNavigate } from "react-router-dom";
+import { SessionInfo } from '../@types/Restaurant/user'
+import { api } from '../service/apiClient'
+import { SignInProps } from '../pages/SignIn'
+import { SignInProviderProps } from '../pages/ProviderPages/SignInProvider'
+import { ProviderInfo } from '../@types/Provider/provider'
+import { differenceInMinutes } from 'date-fns'
+import { useNavigate } from 'react-router-dom'
 
 type AuthContextDataProps = {
-  signInProvider: (providerCredentials: SignInProviderProps) => Promise<void>;
-  providerSession: ProviderInfo | null;
-  signOut: () => Promise<void>;
-  isAuthenticated: boolean;
-};
+  signInProvider: (providerCredentials: SignInProviderProps) => Promise<void>
+  providerSession: ProviderInfo | null
+  signOut: () => Promise<void>
+  isAuthenticated: boolean
+}
 
 type AuthContextProviderProps = {
-  children: ReactNode;
-};
+  children: ReactNode
+}
 
 export const AuthContext = createContext<AuthContextDataProps>(
-  {} as AuthContextDataProps
-);
+  {} as AuthContextDataProps,
+)
 
 export function AuthContextProvider({ children }: AuthContextProviderProps) {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const [providerSession, setProviderSession] = useState<ProviderInfo | null>(
-    null
-  );
-  const [lastUserUpdate, setLastUserUpdate] = useState<Date>(new Date());
-  const isAuthenticated = !!providerSession;
+    null,
+  )
+  const [lastUserUpdate, setLastUserUpdate] = useState<Date>(new Date())
+  const isAuthenticated = !!providerSession
 
   useEffect(() => {
-    const accessToken = Cookies.get("meu-garcom-web.provider.token");
+    const accessToken = Cookies.get('meu-garcom-web.provider.token')
     // const minutesFromLastUpdate = +differenceInMinutes(
     //   new Date(),
     //   lastUserUpdate,
     // )
-          if (accessToken) {
+    if (accessToken) {
       api
-        .get("auth/provider-manager/me",{
-            headers: {
-                Authorization: "Bearer " + accessToken
-            }
+        .get('auth/provider-manager/me', {
+          headers: {
+            Authorization: 'Bearer ' + accessToken,
+          },
         })
         .then((response) => {
-          setLastUserUpdate(new Date());
-          setProviderSession(response.data);
+          setLastUserUpdate(new Date())
+          setProviderSession(response.data)
           navigate('/provider')
         })
         .catch(() => {
-          signOut();
-        });
+          signOut()
+        })
     }
-  }, []);
+  }, [])
 
   // async function refreshUser() {
   //   // TODO: criar setTimeOut para atualizar o usuário com o tempo para não gerar várias requests no /me
@@ -77,28 +77,28 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   // }
 
   async function signInProvider(
-    providerCredentials: SignInProviderProps
+    providerCredentials: SignInProviderProps,
   ): Promise<void> {
     try {
-      const response = await api.post("/auth/provider-manager/sign-in", {
+      const response = await api.post('/auth/provider-manager/sign-in', {
         username: providerCredentials.username,
         password: providerCredentials.password,
-      });
-      const { accessToken, user } = response.data;
-      setProviderSession(user);
-      Cookies.set("meu-garcom-web.provider.token", accessToken, {
+      })
+      const { accessToken, user } = response.data
+      setProviderSession(user)
+      Cookies.set('meu-garcom-web.provider.token', accessToken, {
         expires: 30,
-        path: "/",
-      });
+        path: '/',
+      })
     } catch (error) {
-      console.log("Sign In Error =>", error);
+      console.log('Sign In Error =>', error)
     }
   }
 
   async function signOut() {
-    Cookies.remove("meu-garcom-web.provider.token");
-    setProviderSession(null);
-    navigate("/provider");
+    Cookies.remove('meu-garcom-web.provider.token')
+    setProviderSession(null)
+    navigate('/provider')
   }
 
   return (
@@ -112,6 +112,5 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     >
       {children}
     </AuthContext.Provider>
-  );
+  )
 }
-

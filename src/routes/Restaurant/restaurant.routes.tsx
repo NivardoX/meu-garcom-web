@@ -13,6 +13,8 @@ import { TableOrder } from '../../pages/Restaurant/Table/tableOrder'
 import { UpdateProduct } from '../../pages/Restaurant/Product/update'
 import { UpdateCategory } from '../../pages/Restaurant/Category/update'
 import { UpdateWaiter } from '../../pages/Restaurant/Waiter/update'
+import { UpdateWaiterPassWord } from '../../pages/Restaurant/Waiter/updatePassword'
+import { UpdateEmployee } from '../../pages/Restaurant/Employee/update'
 
 export function RestaurantRouter() {
   return (
@@ -28,6 +30,10 @@ export function RestaurantRouter() {
         <Route path="/restaurant/waiter" element={<Waiter />} />
         <Route path="/restaurant/waiter/create" element={<CreateWaiter />} />
         <Route path="/restaurant/waiter/update" element={<UpdateWaiter />} />
+        <Route
+          path="/restaurant/waiter/updatepass"
+          element={<UpdateWaiterPassWord />}
+        />
 
         <Route path="/restaurant/category" element={<Category />} />
         <Route
@@ -43,6 +49,10 @@ export function RestaurantRouter() {
         <Route
           path="/restaurant/employee/create"
           element={<CreateEmployee />}
+        />
+        <Route
+          path="/restaurant/employee/update"
+          element={<UpdateEmployee />}
         />
       </Route>
     </Routes>

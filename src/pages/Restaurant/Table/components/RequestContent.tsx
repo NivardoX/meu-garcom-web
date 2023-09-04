@@ -1,6 +1,7 @@
 import { Box, HStack, VStack, Text } from '@chakra-ui/react'
 import { ProductImage } from './ProductImage'
 import { RequestStatus } from '../../../../@types/Restaurant/order'
+import exampleFood from '../../../../assets/example-food.jpg'
 
 type RequestContentProps = {
   requestProductName: string
@@ -38,7 +39,7 @@ export function RequestContent({
         bg={color}
       />
       <HStack marginLeft={3} marginRight="auto">
-        <ProductImage url={requestProductImage} />
+        <ProductImage url={requestProductImage || exampleFood} />
         <VStack>
           <Text
             marginTop={1}

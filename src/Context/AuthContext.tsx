@@ -1,18 +1,18 @@
-import { createContext, ReactNode, useEffect, useState } from "react";
-import Cookies from "js-cookie";
+import { createContext, ReactNode, useEffect, useState } from 'react'
+import Cookies from 'js-cookie'
 
-import { SessionInfo } from "../@types/Restaurant/user";
-import { api } from "../service/apiClient";
-import { SignInProps } from "../pages/SignIn";
-import { useNavigate } from "react-router-dom";
-import { useAppToast } from "../hooks/useAppToast";
+import { SessionInfo } from '../@types/Restaurant/user'
+import { api } from '../service/apiClient'
+import { SignInProps } from '../pages/SignIn'
+import { useNavigate } from 'react-router-dom'
+import { useAppToast } from '../hooks/useAppToast'
 
 type AuthContextDataProps = {
-  signIn: (restaurantCredentials: SignInProps) => Promise<void>;
-  restaurantSession: SessionInfo["user"] | null;
-  signOut: () => Promise<void>;
-  isAuthenticated: boolean;
-};
+  signIn: (restaurantCredentials: SignInProps) => Promise<void>
+  restaurantSession: SessionInfo['user'] | null
+  signOut: () => Promise<void>
+  isAuthenticated: boolean
+}
 
 type AuthContextProviderProps = {
   children: ReactNode
@@ -23,30 +23,30 @@ export const AuthContext = createContext<AuthContextDataProps>(
 )
 
 export function AuthContextProvider({ children }: AuthContextProviderProps) {
-  const { handleRequestError } = useAppToast();
-  const navigate = useNavigate();
+  const { handleRequestError } = useAppToast()
+  const navigate = useNavigate()
   const [restaurantSession, setRestaurantSession] = useState<
-    SessionInfo["user"] | null
-  >(null);
-  const [lastUserUpdate, setLastUserUpdate] = useState<Date>(new Date());
-  const isAuthenticated = !!restaurantSession;
+    SessionInfo['user'] | null
+  >(null)
+  const [lastUserUpdate, setLastUserUpdate] = useState<Date>(new Date())
+  const isAuthenticated = !!restaurantSession
 
   useEffect(() => {
-      const accessToken = Cookies.get("meu-garcom-web.token");
+    const accessToken = Cookies.get('meu-garcom-web.token')
     if (accessToken) {
       api
-        .get("/auth/restaurant-manager/me")
+        .get('/auth/restaurant-manager/me')
         .then((response) => {
-          setLastUserUpdate(new Date());
-          setRestaurantSession(response.data);
+          setLastUserUpdate(new Date())
+          setRestaurantSession(response.data)
           navigate('/')
-          console.log("ME =>", response.data);
+          console.log('ME =>', response.data)
         })
         .catch(() => {
-          signOut();
-        });
+          signOut()
+        })
     }
-  }, []);
+  }, [])
 
   // async function refreshUser() {
   //   // TODO: criar setTimeOut para atualizar o usuário com o tempo para não gerar várias requests no /me
@@ -70,27 +70,27 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
   async function signIn(restaurantCredentials: SignInProps): Promise<void> {
     try {
-      const response = await api.post("/auth/restaurant-manager/sign-in", {
+      const response = await api.post('/auth/restaurant-manager/sign-in', {
         username: restaurantCredentials.username,
         password: restaurantCredentials.password,
-      });
-      const { accessToken, user } = response.data;
-      api.defaults.headers.Authorization = `Bearer ${accessToken}`;
-      setRestaurantSession(user);
-      Cookies.set("meu-garcom-web.token", accessToken, {
+      })
+      const { accessToken, user } = response.data
+      api.defaults.headers.Authorization = `Bearer ${accessToken}`
+      setRestaurantSession(user)
+      Cookies.set('meu-garcom-web.token', accessToken, {
         expires: 30,
-        path: "/",
-      });
+        path: '/',
+      })
     } catch (error) {
-      handleRequestError(error);
-      throw error;
+      handleRequestError(error)
+      throw error
     }
   }
 
   async function signOut() {
-    Cookies.remove("meu-garcom-web.token");
-    setRestaurantSession(null);
-    navigate("/");
+    Cookies.remove('meu-garcom-web.token')
+    setRestaurantSession(null)
+    navigate('/')
   }
 
   return (
@@ -104,6 +104,5 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     >
       {children}
     </AuthContext.Provider>
-  );
+  )
 }
-

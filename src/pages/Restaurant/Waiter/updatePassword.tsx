@@ -1,6 +1,5 @@
 import { Box } from '@chakra-ui/react'
 import { CreateContent } from '../../../components/CreateContent'
-import { Input } from '../../../components/Input'
 import { FormButton } from '../../../components/Form/FormButton'
 import * as zod from 'zod'
 import { useForm } from 'react-hook-form'
@@ -9,46 +8,42 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import { api } from '../../../service/apiClient'
 import { useAppToast } from '../../../hooks/useAppToast'
-import { useAuth } from '../../../hooks/useAuth'
+import { InputPassword } from '../../../components/Input/Password'
 
 interface IUpdateWaiter {
-  name: string
-  username: string
+  password: string
+  confirm: string
 }
 
 const UpdateWaiterValidationSchema = zod.object({
-  name: zod.string().min(1, 'Editar Nome'),
-  username: zod.string().min(1, 'Informe o nove Email'),
+  password: zod.string().min(6, 'Nova senha'),
+  confirm: zod.string().min(6, 'confirme sua senha'),
 })
 
-export function UpdateWaiter() {
+export function UpdateWaiterPassWord() {
   const { handleRequestSuccess, handleRequestError } = useAppToast()
   const navigate = useNavigate()
   const location = useLocation()
   const { waiter } = location.state
-  const { restaurantSession } = useAuth()
 
   const { register, handleSubmit } = useForm<IUpdateWaiter>({
     resolver: zodResolver(UpdateWaiterValidationSchema),
-    defaultValues: {
-      name: waiter.name,
-      username: waiter.username,
-    },
   })
 
   const handleUpdateWaiter = async (form: IUpdateWaiter) => {
     try {
       console.log(waiter.id)
+      if (form.password === form.confirm) {
+        const response = await api.patch(`/waiters/${waiter.id}`, {
+          password: form.password,
+        })
 
-      const response = await api.put(`/waiters/${waiter.id}`, {
-        name: form.name,
-        username: form.username,
-        restaurantManagerId: restaurantSession?.id,
-      })
-
-      console.log(response.data)
-      handleRequestSuccess('Garçom Atualizado!')
-      navigate('/restaurant/waiter')
+        console.log(response.data)
+        handleRequestSuccess('Garçom Atualizado!')
+        navigate('/restaurant/waiter')
+      } else {
+        handleRequestError('', 'as senhas não conferem')
+      }
     } catch (error) {
       handleRequestError(error)
     }
@@ -62,14 +57,14 @@ export function UpdateWaiter() {
     <Box w="100%">
       <CreateContent headingTitle="Editar Garçom">
         <form onSubmit={handleSubmit(handleUpdateWaiter)}>
-          <Input
-            name="name"
-            label="Editar nome do garçom"
+          <InputPassword
+            name="password"
+            label="Editar a senha do garçom"
             register={register}
           />
-          <Input
-            name="username"
-            label="Editar nome do garçom"
+          <InputPassword
+            name="confirm"
+            label="Confirme a senha do garçom"
             register={register}
           />
           <FormButton isDisable={false} buttonSubmitTitle="Editar" />

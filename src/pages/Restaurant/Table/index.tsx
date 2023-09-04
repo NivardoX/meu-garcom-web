@@ -16,10 +16,16 @@ import { Loading } from '../../../components/Loading'
 
 export function Table() {
   const navigate = useNavigate()
-  const { tables, fetchAllTables, fetchingTables } = useTables()
+  const {
+    tables,
+    fetchAllTables,
+    fetchingTables,
+    setWaiterCalled,
+    setNewOrder,
+  } = useTables()
   const { handleRequestError, handleRequestSuccess } = useAppToast()
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [loadingTables, setLoadingTables] = useState<boolean>(false)
+  const [, setLoadingTables] = useState<boolean>(false)
 
   const handleCreateTable = async () => {
     setLoadingTables(true)
@@ -39,6 +45,8 @@ export function Table() {
 
   function handleOpenTable(tableId: TableType['id']) {
     navigate('/restaurant/table/order', { state: { tableId } })
+    setWaiterCalled(false)
+    setNewOrder(false)
   }
 
   useEffect(() => {

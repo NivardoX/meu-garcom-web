@@ -15,9 +15,9 @@ export const SideBarContainer = styled.div`
 
 export const SideBarLogoImage = styled.img`
   margin-top: 2.625rem;
-  width: 6.5rem;
-  height: 3.688rem;
-  margin-bottom: 3.7rem;
+  width: 5rem;
+  height: 5rem;
+  margin-bottom: 3rem;
 `
 
 export const SideBarOptionContent = styled(Link)`

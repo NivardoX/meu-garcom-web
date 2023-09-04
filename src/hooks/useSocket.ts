@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import io, { Socket } from 'socket.io-client'
 import { TableSession } from '../@types/Restaurant/tableSession'
 
-const DEFAULT_URL =
+const DEFAULT_URL = // 'http://localhost:3333'
   'http://meu-garcom-load-balancer-684548247.us-east-1.elb.amazonaws.com'
 
 type Events =
@@ -19,28 +19,28 @@ type MappedEvents = Record<Events, (args: { content: TableSession }) => void>
 
 const useSocket = (url: string = DEFAULT_URL): Socket<MappedEvents> => {
   const socketRef = useRef<Socket<MappedEvents>>()
-  const [socketUrl, setSocketUrl] = useState(url) 
+  const [socketUrl, setSocketUrl] = useState(url)
 
   useEffect(() => {
     socketRef.current = io(url)
-    console.log('refresh');
-    
+    console.log('refresh')
+
     return () => {
       socketRef.current?.disconnect()
     }
   }, [socketUrl])
   const refresh = () => {
     socketRef.current = io(url)
-    console.log('refresh');
-    
+    console.log('refresh')
+
     return () => {
       socketRef.current?.disconnect()
     }
   }
-setInterval(() => {
-  setSocketUrl(url)
-  refresh()
-}, 1000000)
+  setInterval(() => {
+    setSocketUrl(url)
+    refresh()
+  }, 1000000)
   return socketRef.current as Socket<MappedEvents>
 }
 

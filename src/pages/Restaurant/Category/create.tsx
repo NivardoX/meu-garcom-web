@@ -10,7 +10,7 @@ import { useAppToast } from '../../../hooks/useAppToast'
 import { useNavigate } from 'react-router-dom'
 
 const CreateCategoryValidationSchema = zod.object({
-  name: zod.string().min(1, 'Informe a Categoria'),
+  name: zod.string().min(2, 'Informe a Categoria'),
 })
 
 export type CreateCategoryProps = zod.infer<

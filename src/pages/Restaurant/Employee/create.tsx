@@ -19,9 +19,12 @@ export type CreateEmployeeProps = {
 
 const CreateCategoryValidationSchema = zod.object({
   employeeName: zod.string().min(1, 'Informe o nome'),
-  employeeUserName: zod.string().min(1, 'Informe o usuário'),
-  employeePassword: zod.string().min(1, 'Crie uma senha'),
-  employeeConfirmPassword: zod.string().min(1, 'Senhas devem ser identicas'),
+  employeeUserName: zod
+    .string()
+    .min(1, 'Informe o usuário')
+    .email('This is not a valid email.'),
+  employeePassword: zod.string().min(4, 'Crie uma senha'),
+  employeeConfirmPassword: zod.string().min(4, 'Senhas devem ser identicas'),
 })
 
 export function CreateEmployee() {
@@ -48,6 +51,9 @@ export function CreateEmployee() {
   const isSubmitDisabled: boolean = !observerContentForm
 
   const handleCreateEmployee = async ({ ...props }: CreateEmployeeProps) => {
+    if (props.employeePassword !== props.employeeConfirmPassword) {
+      return handleRequestError('error', 'As senhas devem ser iguais')
+    }
     try {
       const response = await api.post('/restaurant-manager', {
         name: props.employeeName,

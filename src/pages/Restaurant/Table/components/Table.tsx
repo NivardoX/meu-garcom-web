@@ -1,6 +1,8 @@
 import { Box, Text } from '@chakra-ui/react'
+import { useState, useEffect } from 'react'
 import { Table as TableType } from '../../../../@types/Restaurant/tables'
 import { RequestTableSessionStatus } from '../../../../@types/Restaurant/tableSession'
+import { useTables } from '../../../../hooks/useTables'
 
 type TableProps = {
   table: TableType
@@ -8,14 +10,28 @@ type TableProps = {
 }
 
 export function Table({ table, onPress }: TableProps) {
+  const { waiterCalled, newOrder } = useTables()
   const requestTableSessionStatus: Record<RequestTableSessionStatus, string> = {
     [RequestTableSessionStatus.OPENED]: 'red',
     [RequestTableSessionStatus.REQUESTEDPAYMENT]: 'orange',
   }
+  useEffect(() => {
+    setBackgroundColor(
+      table.tableSession
+        ? waiterCalled
+          ? 'blue'
+          : newOrder
+          ? 'darkred'
+          : requestTableSessionStatus[table.tableSession.status]
+        : 'green',
+    )
+  }, [table.tableSession?.status, waiterCalled, newOrder])
 
-  const backgroundColor = table.tableSession
-    ? requestTableSessionStatus[table.tableSession.status]
-    : 'green'
+  const [backgroundColor, setBackgroundColor] = useState(
+    table.tableSession
+      ? requestTableSessionStatus[table.tableSession.status]
+      : 'green',
+  )
 
   return (
     <button onClick={onPress}>

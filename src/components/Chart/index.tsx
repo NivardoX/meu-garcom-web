@@ -8,11 +8,16 @@ interface ChartProps {
   children: ReactNode
   href?: string
   hasCreateButton?: boolean
+  edit?: boolean
   openModal?: () => void
   onPress?: () => void
 }
 
-export function Chart({ hasCreateButton = true, ...props }: ChartProps) {
+export function Chart({
+  hasCreateButton = true,
+  edit = false,
+  ...props
+}: ChartProps) {
   return (
     <Flex w="100%" my="9" maxWidth={1480} mx="auto" px="8">
       <Box flex="1" borderRadius={8} bg="gray.800" p={8}>
@@ -21,11 +26,13 @@ export function Chart({ hasCreateButton = true, ...props }: ChartProps) {
             {props.headingTitle}
           </Heading>
           {hasCreateButton ? (
-            <CreateButton
-              title={'Criar Novo'}
-              href={props.href}
-              onPress={props.onPress}
-            />
+            !edit && (
+              <CreateButton
+                title={'Criar Novo'}
+                href={props.href}
+                onPress={props.onPress}
+              />
+            )
           ) : (
             <HStack w="auto">
               <QrCodeButton onClick={props.openModal} />

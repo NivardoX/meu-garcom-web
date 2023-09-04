@@ -1,118 +1,157 @@
-import { useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { Chart } from "../../../components/Chart";
-import { Input } from "../../../components/Input";
-import * as zod from "zod";
-import { FormButton } from "../../../components/Form/FormButton";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Select } from "./components/Select";
-import { Storage } from "./components/Storage";
-import { api } from "../../../service/apiClient";
-import { CategoryResponse, CategoryStorage } from "../Category";
-import { GetProductsResponse } from ".";
-import { Image } from "@chakra-ui/react";
-import { ProductImage } from "../Table/components/ProductImage";
+import { useLocation, useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Chart } from '../../../components/Chart'
+import { Input } from '../../../components/Input'
+import * as zod from 'zod'
+import { FormButton } from '../../../components/Form/FormButton'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Select } from './components/Select'
+import { Storage } from './components/Storage'
+import { api } from '../../../service/apiClient'
+import { CategoryResponse, CategoryStorage } from '../Category'
+import { useAppToast } from '../../../hooks/useAppToast'
+import { ImageInput } from './components/ImageInput'
 
 type ProductsResponse = {
   products: [
     {
       product: {
-        id: string;
-        name: string;
-        description: string;
-        restaurantId: string;
-        imageUrl: string;
-        priceInCents: number;
-        availableAmount: number;
-      availabilityType: string,
-      estimatedMinutesToPrepare: number;
+        id: string
+        name: string
+        description: string
+        restaurantId: string
+        imageUrl: string
+        priceInCents: number
+        availableAmount: number
+        availabilityType: string
+        estimatedMinutesToPrepare: number
         category: {
-          id: string;
-          name: string;
-          restaurantId: string;
-        };
-      };
-    }
-  ];
-};
+          id: string
+          name: string
+          restaurantId: string
+        }
+      }
+    },
+  ]
+}
 
 const UpdateProductValidationSchema = zod.object({
-  categoryId: zod.string().min(1, "Informe a categoria do produto"),
-  name: zod.string().min(1, "Informe a Categoria"),
-  price: zod.number().min(1, "Informe o Preco"),
-  description: zod.string().min(1, "Informe a Categoria"),
+  categoryId: zod.string().min(1, 'Informe a categoria do produto'),
+  name: zod.string().min(1, 'Informe a Categoria'),
+  priceInCents: zod.string().min(1, 'Informe o Preco'),
+  description: zod.string().min(1, 'Informe a Categoria'),
   estimatedMinutesToPrepare: zod.string().optional(),
-  image: zod.string().optional() || File,
   isAvailable: zod.boolean().optional(),
   availableAmount: zod.string().optional() || zod.number().optional(),
-  availabilityType: zod.string().optional()
-});
+})
 
-type UpdateProductProps = zod.infer<typeof UpdateProductValidationSchema>;
+type UpdateProductProps = zod.infer<typeof UpdateProductValidationSchema>
 
 export function UpdateProduct() {
-  const location = useLocation();
-  const product = location.state as ProductsResponse["products"][0];
-  const [categories, setCategories] = useState<CategoryResponse[]>([]);
-  const [productImage, setProductImage] = useState<File | undefined>(undefined);
-  const [selectedCategory, setSelectedCategory] = useState<string>();
-  const [storageCategory, setStorageCategory] = useState<string>(product.product.availabilityType === "QUANTITY"? '1':'2');
-  const [categoriesStorage, setCategoriesStogare] = useState<CategoryStorage[]>(
-    [
-      { name: "QUANTITY", id: "1" },
-      { name: "AVAILABILITY", id: "2" },
-    ]
-  );
-  const { register, handleSubmit, watch, reset } = useForm<UpdateProductProps>({
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { handleRequestError, handleRequestSuccess } = useAppToast()
+  const [productImage, setProductImage] = useState<File | undefined>(undefined)
+  const product = location.state as ProductsResponse['products'][0]
+  const [categories, setCategories] = useState<CategoryResponse[]>([])
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    product.product.category?.id,
+  )
+  const [storageCategory, setStorageCategory] = useState<string>(
+    product.product.availabilityType === 'QUANTITY' ? '1' : '2',
+  )
+  const [categoriesStorage] = useState<CategoryStorage[]>([
+    { name: 'Quantidade', id: '1' },
+    { name: 'Disponibilidade', id: '2' },
+  ])
+
+  const { register, handleSubmit, reset } = useForm<UpdateProductProps>({
     resolver: zodResolver(UpdateProductValidationSchema),
     defaultValues: {
-      categoryId: product.product.category?.name || "",
-      name: product.product.name || "",
-      price: product.product.priceInCents / 100 || 0,
-      description: product.product.description || "",
+      categoryId: product.product.category?.id || '',
+      name: product.product.name || '',
+      priceInCents:
+        (product.product.priceInCents / 100).toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL',
+        }) || '0',
+      description: product.product.description || '',
       estimatedMinutesToPrepare:
-        product.product.estimatedMinutesToPrepare.toString() || "",
-      image: product.product.imageUrl || "",
-      availableAmount: product.product.availableAmount.toString() || "",
+        product.product.estimatedMinutesToPrepare.toString() || '',
+      availableAmount: product.product.availableAmount.toString() || '',
     },
-  });
+  })
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    setProductImage(file)
+  }
 
   const onSubmit = async (data: UpdateProductProps) => {
-    console.log(product.product.category);
-    if (data.availabilityType === '1') {
-      data.availabilityType = 'QUANTITY';
-    } else {
-      data.availabilityType = 'AVAILABILITY';
-    }
-    try {
-      const res = await api.put(`products/${product.product.id}`, data);
-      console.log(res);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    data.priceInCents = data.priceInCents.replace(/\D/g, '')
 
-  async function getAllCategories() {
+    const formData = new FormData()
+    Object.entries(data).forEach((entry) => {
+      const [key, value] = entry
+
+      formData.append(key, value)
+    })
+
+    if (productImage) {
+      console.log(productImage)
+
+      formData.append('image', productImage)
+    }
+
+    if (storageCategory === '1') {
+      formData.append('availabilityType', `QUANTITY`)
+    } else {
+      formData.append('availabilityType', `AVAILABILITY`)
+    }
+
     try {
-      const response = await api.get(`/categories?page=1`);
-      setCategories(response.data.categories);
+      await api.put(`products/${product.product.id}`, formData)
+      handleRequestSuccess('Produto Atualizado com sucesso!')
+      reset()
+      navigate('/restaurant/product')
     } catch (error) {
-      console.log("ERROR =>", error);
+      handleRequestError(error)
+      console.log(error)
     }
   }
 
-  console.log("PRODUCT IMAGE =>", product.product.id);
+  async function getAllCategories() {
+    try {
+      const response = await api.get(`/categories?page=1`)
+      setCategories(response.data.categories)
+    } catch (error) {
+      console.log('ERROR =>', error)
+    }
+  }
+
+  // console.log('PRODUCT IMAGE =>', product.product)
 
   useEffect(() => {
-    getAllCategories();
-  }, []);
+    getAllCategories()
+  }, [])
 
   return (
-    <Chart headingTitle="Editar Produto">
+    <Chart headingTitle="Editar Produto" edit={true}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Input name="name" label="Nome do Produto" register={register} />
-        <Input name="price" label="Preco do Produto" register={register} />
+        <Input
+          name="priceInCents"
+          label="Preco do Produto"
+          onChange={(e) => {
+            const value = parseFloat(e.target.value.replace(/\D/g, '')) / 100
+            e.target.value = value.toLocaleString('pt-BR', {
+              style: 'currency',
+              currency: 'BRL',
+            })
+          }}
+          register={register}
+        />
         <Input
           name="description"
           label="Descricao do Produto"
@@ -130,11 +169,13 @@ export function UpdateProduct() {
         />
         <Select
           name="categoryId"
-          category={categories}
           label="Categoria"
-          value={watch("categoryId")}
           register={register}
-          defaultValue={product.product.name}
+          category={categories}
+          value={selectedCategory}
+          onChange={(event) => {
+            setSelectedCategory(event.target.value)
+          }}
         />
         <Storage
           name="availabilityType"
@@ -143,12 +184,19 @@ export function UpdateProduct() {
           category={categoriesStorage}
           value={storageCategory}
           onChange={(event) => {
-            setStorageCategory(event.target.value);
+            setStorageCategory(event.target.value)
           }}
+        />
+        <ImageInput
+          name="image"
+          label="Imagem do Produto:"
+          url={product.product.imageUrl}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+            handleImageChange(event)
+          }
         />
         <FormButton isDisable={false} buttonSubmitTitle="Editar" />
       </form>
     </Chart>
-  );
+  )
 }
-

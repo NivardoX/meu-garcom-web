@@ -11,6 +11,7 @@ import { useAppToast } from '../../../hooks/useAppToast'
 import { EmptyState } from '../../../components/EmptyState'
 import { RxPerson } from 'react-icons/rx'
 import { Loading } from '../../../components/Loading'
+import { useNavigate } from 'react-router-dom'
 
 type GetEmployeePropsResponse = {
   restaurantManagers: [
@@ -40,6 +41,7 @@ const chartProperty: ChartItemsProperty<EmployeeProps> = {
 }
 
 export function Employee() {
+  const navigate = useNavigate()
   const { handleRequestError, handleRequestSuccess } = useAppToast()
   const [employee, setEmployee] = useState<EmployeeProps[]>([])
   const [loadingEmployees, setLoadingEmployees] = useState<boolean>(false)
@@ -73,7 +75,9 @@ export function Employee() {
       handleRequestError(error)
     }
   }
-
+  const handleOpenUpdateEmployee = (employee: EmployeeProps) => {
+    navigate('/restaurant/employee/update', { state: { employee } })
+  }
   useEffect(() => {
     getAllEmployee()
   }, [])
@@ -104,6 +108,7 @@ export function Employee() {
                   data={employee}
                   key={employeeIndex}
                   onRemove={() => handleRemoveEmployee(employee.id)}
+                  onEdit={() => handleOpenUpdateEmployee(employee)}
                 />
               )
             })}

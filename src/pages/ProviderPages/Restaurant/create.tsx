@@ -1,82 +1,82 @@
-import { Box, Button, SimpleGrid, VStack } from "@chakra-ui/react";
-import { CreateContent } from "../../../components/CreateContent";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as zod from "zod";
-import { FormButton } from "../../../components/Form/FormButton";
-import { Input } from "../../../components/Input";
-import { apiProvider } from "../../../service/apiProvider";
-import { useNavigate } from "react-router-dom";
-import React, { useState } from "react";
+import { Box, Button, SimpleGrid, VStack } from '@chakra-ui/react'
+import { CreateContent } from '../../../components/CreateContent'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as zod from 'zod'
+import { FormButton } from '../../../components/Form/FormButton'
+import { Input } from '../../../components/Input'
+import { apiProvider } from '../../../service/apiProvider'
+import { useNavigate } from 'react-router-dom'
+import React, { useState } from 'react'
 
 export type CreateRestaurantProps = {
-  restaurantName: string;
-  restaurantManagerName: string;
-  restaurantUsernameRestaurant: string;
-  restaurantPassword: string;
-  restaurantConfirmPassword: string;
-  expiresAt: Date;
-};
+  restaurantName: string
+  restaurantManagerName: string
+  restaurantUsernameRestaurant: string
+  restaurantPassword: string
+  restaurantConfirmPassword: string
+  expiresAt: Date
+}
 
 const CreateRestaurantValidationSchema = zod.object({
-  restaurantName: zod.string().min(1, "Informe a categoria do produto"),
-  restaurantManagerName: zod.string().min(1, "Informe o preço do produto"),
+  restaurantName: zod.string().min(1, 'Informe a categoria do produto'),
+  restaurantManagerName: zod.string().min(1, 'Informe o preço do produto'),
   restaurantUsernameRestaurant: zod
     .string()
-    .min(1, "Informe a descrição do produto"),
-  restaurantConfirmPassword: zod.string().min(1, "Informe o preço do produto"),
-  expiresAt: zod.string().min(1, "Informe a Categoria"),
-});
+    .min(1, 'Informe a descrição do produto'),
+  restaurantConfirmPassword: zod.string().min(1, 'Informe o preço do produto'),
+  expiresAt: zod.string().min(1, 'Informe a Categoria'),
+})
 
 export function CreateRestaurant() {
-  const [ maxTables, setMaxTables] = useState()
-  const navigate = useNavigate();
+  const [maxTables, setMaxTables] = useState()
+  const navigate = useNavigate()
   const { register, handleSubmit, watch, formState, reset } =
     useForm<CreateRestaurantProps>({
       resolver: zodResolver(CreateRestaurantValidationSchema),
       defaultValues: {
-        restaurantName: "",
-        restaurantManagerName: "",
-        restaurantUsernameRestaurant: "",
-        restaurantPassword: "",
-        restaurantConfirmPassword: "",
+        restaurantName: '',
+        restaurantManagerName: '',
+        restaurantUsernameRestaurant: '',
+        restaurantPassword: '',
+        restaurantConfirmPassword: '',
       },
-    });
+    })
 
   const observerContentForm = watch([
-    "restaurantName",
-    "restaurantManagerName",
-    "restaurantUsernameRestaurant",
-    "restaurantPassword",
-    "restaurantConfirmPassword",
-    "expiresAt",
-  ]);
-  const isSubmitDisabled: boolean = !observerContentForm;
+    'restaurantName',
+    'restaurantManagerName',
+    'restaurantUsernameRestaurant',
+    'restaurantPassword',
+    'restaurantConfirmPassword',
+    'expiresAt',
+  ])
+  const isSubmitDisabled: boolean = !observerContentForm
 
   const handleCreateRestaurant = async ({
     ...props
   }: CreateRestaurantProps) => {
-    console.log("oi", {
-      props
-    });
+    console.log('oi', {
+      props,
+    })
 
     try {
-      const response = await apiProvider.post("/restaurant", {
+      const response = await apiProvider.post('/restaurant', {
         restaurantName: props.restaurantName,
         managerName: props.restaurantManagerName,
         username: props.restaurantUsernameRestaurant,
         password: props.restaurantConfirmPassword,
         expiresAt: new Date(props.expiresAt),
-        maxTables: Number(maxTables)
-      });
+        maxTables: Number(maxTables),
+      })
 
-      console.log("createRestaurant Response =>", response);
-      reset();
+      console.log('createRestaurant Response =>', response)
+      reset()
       navigate('/provider/restaurant')
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-  };
+  }
   return (
     <Box w="100%">
       <CreateContent headingTitle="Criar Restaurante">
@@ -114,7 +114,7 @@ export function CreateRestaurant() {
                 type="date"
                 register={register}
               />
-               <Input
+              <Input
                 name="maxTables"
                 label="Numero de mesas"
                 type="number"
@@ -127,6 +127,5 @@ export function CreateRestaurant() {
         </form>
       </CreateContent>
     </Box>
-  );
+  )
 }
-

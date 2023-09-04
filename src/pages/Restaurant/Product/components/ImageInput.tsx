@@ -4,11 +4,12 @@ import { Box, Image } from '@chakra-ui/react'
 interface ImageInputProps {
   name: string
   label: string
+  url?: string
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-export function ImageInput(props: ImageInputProps) {
-  const [preview, setPreview] = useState<string | null>(null)
+export function ImageInput({ url, ...props }: ImageInputProps) {
+  const [preview, setPreview] = useState<string | null>(url || null)
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]

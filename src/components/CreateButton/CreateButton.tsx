@@ -1,13 +1,13 @@
-import { Button, Icon } from "@chakra-ui/react";
-import { RiAddLine } from "react-icons/ri";
-import { Link } from "react-router-dom";
+import { Button, Icon } from '@chakra-ui/react'
+import { RiAddLine } from 'react-icons/ri'
+import { Link } from 'react-router-dom'
 
 export type CreateButtonProps = {
-  title: string;
-  href?: string;
-  color?: string;
-  onPress?: () => void;
-};
+  title: string
+  href?: string
+  color?: string
+  onPress?: () => void
+}
 
 export function CreateButton({
   title,
@@ -24,7 +24,8 @@ export function CreateButton({
             size="md"
             fontSize="sm"
             textColor="white"
-            bg={color || "#7D3421"}
+            cursor="pointer"
+            colorScheme={color || 'orange'}
             leftIcon={color ? undefined : <Icon as={RiAddLine} color="white" />}
             onClick={onPress}
           >
@@ -37,7 +38,8 @@ export function CreateButton({
           size="md"
           fontSize="sm"
           textColor="white"
-          bg={color || "#7D3421"}
+          colorScheme={color || 'orange'}
+          cursor="pointer"
           leftIcon={color ? undefined : <Icon as={RiAddLine} color="white" />}
           onClick={onPress}
         >
@@ -45,6 +47,5 @@ export function CreateButton({
         </Button>
       )}
     </>
-  );
+  )
 }
-

@@ -12,6 +12,7 @@ import { EmptyState } from '../../../components/EmptyState'
 import { TbTie } from 'react-icons/tb'
 import { Loading } from '../../../components/Loading'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../../hooks/useAuth'
 
 type GetWaiterResponse = {
   waiters: [
@@ -40,6 +41,7 @@ export function Waiter() {
   const { handleRequestError, handleRequestSuccess } = useAppToast()
   const [waiter, setWaiter] = useState<WaiterProps[]>([])
   const [loadingWaiters, setLoadingWaiters] = useState<boolean>(false)
+  const { restaurantSession } = useAuth()
 
   async function getAllWaiters() {
     setLoadingWaiters(true)
@@ -56,12 +58,17 @@ export function Waiter() {
 
   const handleRemoveWaiter = async (waiterId: string) => {
     try {
-      const response = await api.delete(`/waiters/${waiterId}`)
+      const response = await api.delete(`/waiters/${waiterId}`, {
+        data: {
+          restaurantManagerId: restaurantSession?.id,
+        },
+      })
 
       if (response.status === 204) {
         handleRequestSuccess('Colaborador removido com sucesso!')
         getAllWaiters()
       }
+      console.log(restaurantSession)
     } catch (error) {
       handleRequestError(error)
     }
@@ -70,7 +77,9 @@ export function Waiter() {
   const handleOpenUpdateWaiter = (waiter: WaiterProps) => {
     navigate('/restaurant/waiter/update', { state: { waiter } })
   }
-
+  const handleOpenUpdatePasswordWaiter = (waiter: WaiterProps) => {
+    navigate('/restaurant/waiter/updatepass', { state: { waiter } })
+  }
   useEffect(() => {
     getAllWaiters()
   }, [])
@@ -95,6 +104,8 @@ export function Waiter() {
                   values={chartProperty}
                   data={waiter}
                   key={waiterIndex}
+                  password
+                  onPassword={() => handleOpenUpdatePasswordWaiter(waiter)}
                   onEdit={() => handleOpenUpdateWaiter(waiter)}
                   onRemove={() => handleRemoveWaiter(waiter.id)}
                 />

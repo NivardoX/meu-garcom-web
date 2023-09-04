@@ -1,5 +1,5 @@
 import { Tbody, Td, Tr, Button, Icon } from '@chakra-ui/react'
-import { RiPencilLine } from 'react-icons/ri'
+import { RiPencilLine, RiEyeFill } from 'react-icons/ri'
 import { FaClock, FaRegTrashAlt } from 'react-icons/fa'
 import { format } from 'date-fns'
 import { useEffect } from 'react'
@@ -17,8 +17,10 @@ export type ChartItemsProperty<T> = {
 type ChartItemsProps<T> = {
   values: ChartItemsProperty<T>
   expires?: boolean
+  password?: boolean
   data: T
   onEdit?: () => void
+  onPassword?: () => void
   onRemove?: () => void
   onExpires?: () => void
 }
@@ -31,7 +33,6 @@ export function ChartItems<T>(props: ChartItemsProps<T>) {
   ][]
 
   const chartValues = propValues.map(([key, value], index) => {
-    console.log(value)
     return (
       <Td textColor="gray.300" fontWeight="bold" key={index}>
         {value.format === 'currency'
@@ -63,6 +64,19 @@ export function ChartItems<T>(props: ChartItemsProps<T>) {
           >
             Editar
           </Button>
+          {props.password && (
+            <Button
+              as="a"
+              size="sm"
+              fontSize="sm"
+              colorScheme="blue"
+              leftIcon={<Icon as={RiEyeFill} color="white" fontSize="18" />}
+              marginLeft={2}
+              onClick={props.onPassword}
+            >
+              senha
+            </Button>
+          )}
           {props.expires ? (
             <Button
               as="a"

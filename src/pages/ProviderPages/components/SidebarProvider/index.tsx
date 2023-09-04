@@ -3,7 +3,7 @@ import {
   SideBarLogoImage,
   SideBarName,
   SideBarOptionContent,
-  ExitButton
+  ExitButton,
 } from './styles'
 import LogoImage from '../../../../assets/Logo.svg'
 import { IoRestaurantOutline } from 'react-icons/io5'

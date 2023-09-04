@@ -10,7 +10,7 @@ import { api } from '../../../service/apiClient'
 import { useAppToast } from '../../../hooks/useAppToast'
 
 const UpdateCategoryValidationSchema = zod.object({
-  name: zod.string().min(1, 'Informe a Categoria'),
+  name: zod.string().min(2, 'Informe a Categoria'),
 })
 
 export type UpdateCategoryProps = zod.infer<
@@ -31,6 +31,11 @@ export function UpdateCategory() {
   })
 
   const handleUpdateCategory = async (form: UpdateCategoryProps) => {
+    console.log(form, category.name)
+    if (form.name === category.name) {
+      return handleRequestError('error', 'Não houve mudança na categoria')
+    }
+
     try {
       const response = await api.put(`/categories/${category.id}`, form)
       if (response.status === 200) {
