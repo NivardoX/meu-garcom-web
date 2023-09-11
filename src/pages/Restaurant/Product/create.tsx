@@ -60,7 +60,7 @@ export function CreateProduct() {
 
   const handleCreateProduct = async (form: ICreateProduct) => {
     form.priceInCents = form.priceInCents.replace(/\D/g, '')
-    const time = parseInt(form.estimatedMinutesToPrepare)
+    const time = parseInt(String(form.estimatedMinutesToPrepare))
     const formData = new FormData()
 
     Object.entries(form).forEach((entry) => {

@@ -12,7 +12,6 @@ import { TbTie } from 'react-icons/tb'
 import { AiOutlineTag } from 'react-icons/ai'
 import { IoIosLogOut } from 'react-icons/io'
 import { useAuth } from '../../hooks/useAuth'
-import { Link } from 'react-router-dom'
 
 export function SideBar() {
   const { signOut } = useAuth()

@@ -7,7 +7,6 @@ import {
 import { ChartContent } from '../../../components/ChartContent/ChartContent'
 import { api } from '../../../service/apiClient'
 import { useEffect, useState } from 'react'
-import { useAuth } from '../../../hooks/useAuth'
 import { useAppToast } from '../../../hooks/useAppToast'
 import { EmptyState } from '../../../components/EmptyState'
 import { IoFastFoodOutline } from 'react-icons/io5'
@@ -63,7 +62,6 @@ export function Product() {
   const { handleRequestError } = useAppToast()
   const [restaurantProduct, setRestaurantProduct] = useState<ProductProps[]>([])
   const [loadingProducts, setLoadingProducts] = useState<boolean>(false)
-  const { restaurantSession } = useAuth()
 
   async function getAllRestaurantProduct() {
     setLoadingProducts(true)
@@ -95,7 +93,7 @@ export function Product() {
 
   // TODO: delete dos produtos ainda não implementado na APi
 
-  const handleRemoveProduct = async (id) => {
+  const handleRemoveProduct = async (id: string) => {
     try {
       setLoadingProducts(true)
       await api.delete(`/products/${id}`)

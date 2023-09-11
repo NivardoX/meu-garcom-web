@@ -95,7 +95,7 @@ export function UpdateProduct() {
     Object.entries(data).forEach((entry) => {
       const [key, value] = entry
 
-      formData.append(key, value)
+      formData.append(key, String(value))
     })
 
     if (productImage) {
