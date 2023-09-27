@@ -1,9 +1,10 @@
+/* eslint-disable prettier/prettier */
 import { useEffect, useRef, useState } from 'react'
 import io, { Socket } from 'socket.io-client'
 import { TableSession } from '../@types/Restaurant/tableSession'
 
 const DEFAULT_URL = // 'http://localhost:3333'
-  'http://meu-garcom-load-balancer-684548247.us-east-1.elb.amazonaws.com'
+  'https://api.meugarcon.com.br/'
 
 type Events =
   | 'new-table-session'
