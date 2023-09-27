@@ -81,14 +81,14 @@ export function setupAPIClient() {
 export function setupAPIProvider() {
   const api = axios.create({
     // 'http://localhost:3333',
-    baseURL: 'http://localhost:3333', // 'http://meu-garcom-load-balancer-684548247.us-east-1.elb.amazonaws.com/',
+    baseURL: 'https://api.meugarcon.com.br/',
     headers: {
       Authorization: `Bearer ${Cookies.get('meu-garcom-web.provider.token')}`,
     },
   })
 
   async function signOut() {
-    // Cookies.remove('meu-garcom-web.provider.token')
+    Cookies.remove('meu-garcom-web.provider.token')
   }
 
   api.interceptors.response.use(
