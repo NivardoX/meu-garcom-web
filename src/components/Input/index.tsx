@@ -73,7 +73,9 @@ export function Input({
         _hover={{ bgColor: 'gray.900' }}
         marginBottom={4}
         size="lg"
-        {...register(name)}
+        {...register(name, {
+          setValueAs: (v) => (v === '' ? undefined : v),
+        })}
         {...rest}
       />
       {!!error && <FormErrorMessage>{error.message}</FormErrorMessage>}

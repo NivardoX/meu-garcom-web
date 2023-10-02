@@ -36,11 +36,11 @@ export function Restaurant() {
   const handleOpenUpdateExpires = (restaurant: any) => {
     navigate('updateExpires', { state: restaurant })
   }
-  const handleOpenEditRestaurant = () => {
-    navigate('update')
+  const handleOpenEditRestaurant = (restaurant: any) => {
+    navigate('update', { state: restaurant })
   }
   return (
-    <Box w="100%">
+    <Box w="100%" height={'100%'}>
       <Chart headingTitle="Restaurantes" href="/provider/restaurant/create/">
         <ChartContent headers={chartProperty}>
           {itemData.map((element, index) => {
@@ -50,7 +50,7 @@ export function Restaurant() {
                 data={element}
                 key={index}
                 expires={true}
-                onEdit={() => handleOpenEditRestaurant()}
+                onEdit={() => handleOpenEditRestaurant(element)}
                 onExpires={() => handleOpenUpdateExpires(element)}
               />
             )
