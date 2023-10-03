@@ -6,53 +6,77 @@ import * as zod from 'zod'
 import { FormButton } from '../../../components/Form/FormButton'
 import { Input } from '../../../components/Input'
 import { apiProvider } from '../../../service/apiProvider'
-import { ImageInput } from '../../Restaurant/Product/components/ImageInput'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { useAppToast } from '../../../hooks/useAppToast'
 
 export type CreateRestaurantProps = {
+  password: string
+  confirmPassword: string
+}
+export type RestaurantProps = {
+  id: string
   name: string
-  maxTables: string
+  username: string
+  password: string
+  restaurantId: string
+  createdAt: string
+  isOwner: boolean
 }
 
 const CreateRestaurantValidationSchema = zod.object({
-  name: zod.string().min(1, 'Informe o nome do restaurante'),
-  maxTables: zod.string().min(1, 'Informe o numero de mesas do restaurante'),
+  password: zod.string().min(6, 'Informe a nova senha do restaurante'),
+  confirmPassword: zod.string().min(6, 'Confirme sua senha'),
 })
 
-export function UpdateRestaurant() {
+export function UpdatePasswordRestaurant() {
   const navigate = useNavigate()
   const location = useLocation()
+  const [restaurant, setRestaurant] = useState<RestaurantProps>(
+    {} as RestaurantProps,
+  )
   const { handleRequestError, handleRequestSuccess } = useAppToast()
-  const product = location.state
+  const product: RestaurantProps = location.state
   useEffect(() => {
-    console.log(product.maxTables)
+    const handleGetRestaurant = async () => {
+      try {
+        const { data } = await apiProvider.get<RestaurantProps[]>(
+          '/restaurant-manager/all',
+        )
+        console.log(data.find((res: any) => res.restaurantId === product.id))
+        const res: RestaurantProps = data.find(
+          (res: RestaurantProps) => res.restaurantId === product.id,
+        ) as RestaurantProps
+        setRestaurant(res)
+      } catch (error) {
+        handleRequestError('')
+        navigate(-1)
+      }
+    }
+    handleGetRestaurant()
   }, [])
-  const [productImage, setProductImage] = useState<File | undefined>(undefined)
   const { register, handleSubmit, watch, reset } =
     useForm<CreateRestaurantProps>({
       resolver: zodResolver(CreateRestaurantValidationSchema),
       defaultValues: {
-        name: product.name,
-        maxTables: String(product.maxTables),
+        password: '',
+        confirmPassword: '',
       },
     })
-  const observerContentForm = watch(['name', 'maxTables'])
+  const observerContentForm = watch(['password', 'confirmPassword'])
   const isSubmitDisabled: boolean = !observerContentForm
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    setProductImage(file)
-  }
   const handleCreateRestaurant = async ({
     ...props
   }: CreateRestaurantProps) => {
+    console.log(restaurant)
     try {
-      await apiProvider.put('/restaurant/' + product.id, {
-        name: props.name,
-        maxTables: Number(props.maxTables),
-        banner: productImage,
-      })
+      await apiProvider.put(
+        '/restaurant-manager/' + restaurant.id + '/provider',
+        {
+          name: restaurant.name,
+          password: props.password,
+        },
+      )
       reset()
       handleRequestSuccess('Restaurante atualizado com sucesso!')
       navigate(-1)
@@ -67,19 +91,13 @@ export function UpdateRestaurant() {
         <form onSubmit={handleSubmit(handleCreateRestaurant)}>
           <VStack spacing="8">
             <SimpleGrid minChildWidth="200px" w="100%" spacing="8">
-              <SimpleGrid>
-                <Input
-                  name="name"
-                  label="Nome do Restaurante"
-                  register={register}
-                />
-                <Input
-                  name="maxTables"
-                  label="Mesas do Restaurante"
-                  type="number"
-                  register={register}
-                />
-                {/* <Input
+              <Input name="password" label="Nova Senha" register={register} />
+              <Input
+                name="confirmPassword"
+                label="Confirme sua senha"
+                register={register}
+              />
+              {/* <Input
                   name="password"
                   label="Nova Senha"
                   register={register}
@@ -91,15 +109,6 @@ export function UpdateRestaurant() {
                   required={false}
                   register={register}
                 /> */}
-              </SimpleGrid>
-              <ImageInput
-                name="banner"
-                label="Imagem do Produto:"
-                url={product.bannerUrl}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                  handleImageChange(event)
-                }
-              />
             </SimpleGrid>
           </VStack>
           <FormButton isDisable={isSubmitDisabled} buttonSubmitTitle="Editar" />

@@ -59,12 +59,12 @@ export function UpdateEmployee() {
 
   return (
     <Box w="100%">
-      <CreateContent headingTitle="Editar Categoria" size="large">
+      <CreateContent headingTitle="Editar funcionario" size="large">
         <form onSubmit={handleSubmit(handleUpdateEmployee)}>
-          <Input name="name" label="Nome da Categoria" register={register} />
+          <Input name="name" label="Nome do funcionario" register={register} />
           <InputPassword
             name="password"
-            label="Nova senha para o gerente"
+            label="Nova senha"
             register={register}
           />
           <InputPassword
