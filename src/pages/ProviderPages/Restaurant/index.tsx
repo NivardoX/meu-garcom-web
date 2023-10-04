@@ -7,6 +7,7 @@ import {
   ChartItems,
   ChartItemsProperty,
 } from '../../../components/ChartItems/ChartItems'
+import Pagination from '../../../components/Pagination'
 import { apiProvider } from '../../../service/apiProvider'
 
 type RestaurantProps = {
@@ -21,18 +22,23 @@ const chartProperty: ChartItemsProperty<RestaurantProps> = {
 
 export function Restaurant() {
   const [itemData, setItemData] = useState<RestaurantProps[]>([])
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [totalItens, setTotalItens] = useState<number>(1)
   const navigate = useNavigate()
 
   useEffect(() => {
     apiProvider
-      .get('restaurant?page=1')
+      .get(`restaurant?page=${currentPage}`)
       .then((response) => {
+        console.log(response.data)
+
         setItemData(response.data.restaurants)
+        setTotalItens(response.data.matchCount)
       })
       .catch((error) => {
         console.log(error)
       })
-  }, [])
+  }, [currentPage])
   const handleOpenUpdateExpires = (restaurant: any) => {
     navigate('updateExpires', { state: restaurant })
   }
@@ -61,6 +67,11 @@ export function Restaurant() {
             )
           })}
         </ChartContent>
+        <Pagination
+          currentPage={currentPage}
+          totalCountOfRegisters={totalItens}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
       </Chart>
     </Box>
   )

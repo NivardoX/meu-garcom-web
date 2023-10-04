@@ -18,12 +18,12 @@ function generatePagesArray(from: number, to: number) {
     .filter((page) => page > 0)
 }
 
-export function Pagination({
+export default function Pagination({
   registerPerPage = 10,
   currentPage = 1,
   ...rest
 }: PaginationProps) {
-  const lastPage = Math.floor(rest.totalCountOfRegisters / registerPerPage)
+  const lastPage = Math.ceil(rest.totalCountOfRegisters / registerPerPage)
 
   const previousPages =
     currentPage > 1
@@ -41,11 +41,9 @@ export function Pagination({
   return (
     <HStack mt="8" justify="space-between" align="center" spacing="6">
       <Box>
-        <strong style={{ color: 'white' }}>0</strong>
-        <strong style={{ color: 'white' }}> - </strong>
-        <strong style={{ color: 'white' }}>10</strong>
+        <strong style={{ color: 'white' }}>{currentPage}</strong>
         <strong style={{ color: 'white' }}> de </strong>
-        <strong style={{ color: 'white' }}>100</strong>
+        <strong style={{ color: 'white' }}>{lastPage}</strong>
       </Box>
       <HStack spacing="2">
         {currentPage > 1 + siblingsCount && (
