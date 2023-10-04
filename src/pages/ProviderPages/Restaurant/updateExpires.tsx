@@ -1,20 +1,25 @@
-import { Box, Button, SimpleGrid, VStack } from '@chakra-ui/react'
+import { Box, SimpleGrid, VStack } from '@chakra-ui/react'
 import { CreateContent } from '../../../components/CreateContent'
 import { useForm } from 'react-hook-form'
 import { FormButton } from '../../../components/Form/FormButton'
 import { Input } from '../../../components/Input'
 import { apiProvider } from '../../../service/apiProvider'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { useAppToast } from '../../../hooks/useAppToast'
 
 export type CreateRestaurantProps = {
   expiresAt: Date
 }
 
 export function ExpiresRestaurant() {
+  const [submited, setSubmited] = useState<boolean>(false)
   const location = useLocation()
+  const navigate = useNavigate()
   const product = location.state
   const { register, handleSubmit, watch, reset } =
     useForm<CreateRestaurantProps>()
+  const { handleRequestError, handleRequestSuccess } = useAppToast()
 
   const observerContentForm = watch(['expiresAt'])
   const isSubmitDisabled: boolean = !observerContentForm
@@ -27,6 +32,7 @@ export function ExpiresRestaurant() {
     })
 
     try {
+      setSubmited(!submited)
       const response = await apiProvider.patch(
         `/restaurant/${product.id}/expiration`,
         {
@@ -34,10 +40,13 @@ export function ExpiresRestaurant() {
         },
       )
 
+      handleRequestSuccess('Restaurante atualizado com sucesso!')
       console.log('createRestaurant Response =>', response)
+      navigate(-1)
       reset()
     } catch (error) {
       console.log(error)
+      handleRequestError('')
     }
   }
   return (
@@ -55,7 +64,7 @@ export function ExpiresRestaurant() {
               />
             </SimpleGrid>
           </VStack>
-          <FormButton isDisable={isSubmitDisabled} />
+          <FormButton isDisable={submited} buttonSubmitTitle="Editar" />
         </form>
       </CreateContent>
     </Box>

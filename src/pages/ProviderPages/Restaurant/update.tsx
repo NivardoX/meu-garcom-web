@@ -29,6 +29,7 @@ export function UpdateRestaurant() {
   useEffect(() => {
     console.log(product.maxTables)
   }, [])
+  const [submited, setSubmited] = useState<boolean>(false)
   const [productImage, setProductImage] = useState<File | undefined>(undefined)
   const { register, handleSubmit, watch, reset } =
     useForm<CreateRestaurantProps>({
@@ -48,6 +49,7 @@ export function UpdateRestaurant() {
     ...props
   }: CreateRestaurantProps) => {
     try {
+      setSubmited(!submited)
       await apiProvider.put('/restaurant/' + product.id, {
         name: props.name,
         maxTables: Number(props.maxTables),
@@ -102,7 +104,7 @@ export function UpdateRestaurant() {
               />
             </SimpleGrid>
           </VStack>
-          <FormButton isDisable={isSubmitDisabled} buttonSubmitTitle="Editar" />
+          <FormButton isDisable={submited} buttonSubmitTitle="Editar" />
         </form>
       </CreateContent>
     </Box>

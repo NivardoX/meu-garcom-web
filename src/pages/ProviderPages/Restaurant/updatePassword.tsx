@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react'
 import { useAppToast } from '../../../hooks/useAppToast'
 
 export type CreateRestaurantProps = {
+  username: string
   password: string
   confirmPassword: string
 }
@@ -25,8 +26,12 @@ export type RestaurantProps = {
 }
 
 const CreateRestaurantValidationSchema = zod.object({
-  password: zod.string().min(6, 'Informe a nova senha do restaurante'),
-  confirmPassword: zod.string().min(6, 'Confirme sua senha'),
+  username: zod.string().email(),
+  password: zod
+    .string()
+    .min(6, 'Informe a nova senha do restaurante')
+    .optional(),
+  confirmPassword: zod.string().min(6, 'Confirme sua senha').optional(),
 })
 
 export function UpdatePasswordRestaurant() {
@@ -36,14 +41,17 @@ export function UpdatePasswordRestaurant() {
     {} as RestaurantProps,
   )
   const { handleRequestError, handleRequestSuccess } = useAppToast()
+  const [submited, setSubmited] = useState<boolean>(false)
   const product: RestaurantProps = location.state
   useEffect(() => {
+    console.log(product)
+
     const handleGetRestaurant = async () => {
       try {
         const { data } = await apiProvider.get<RestaurantProps[]>(
           '/restaurant-manager/all',
         )
-        console.log(data.find((res: any) => res.restaurantId === product.id))
+        //  console.log(data.find((res: any) => res.restaurantId === product.id))
         const res: RestaurantProps = data.find(
           (res: RestaurantProps) => res.restaurantId === product.id,
         ) as RestaurantProps
@@ -55,25 +63,33 @@ export function UpdatePasswordRestaurant() {
     }
     handleGetRestaurant()
   }, [])
+
   const { register, handleSubmit, watch, reset } =
     useForm<CreateRestaurantProps>({
       resolver: zodResolver(CreateRestaurantValidationSchema),
       defaultValues: {
+        username: '',
         password: '',
         confirmPassword: '',
       },
     })
-  const observerContentForm = watch(['password', 'confirmPassword'])
+  const observerContentForm = watch(['username', 'password', 'confirmPassword'])
   const isSubmitDisabled: boolean = !observerContentForm
   const handleCreateRestaurant = async ({
     ...props
   }: CreateRestaurantProps) => {
-    console.log(restaurant)
+    console.log(restaurant.username)
+    setSubmited(!submited)
     try {
+      if (props.password !== props.confirmPassword) {
+        setSubmited(false)
+        return handleRequestError('')
+      }
       await apiProvider.put(
         '/restaurant-manager/' + restaurant.id + '/provider',
         {
           name: restaurant.name,
+          username: props.username,
           password: props.password,
         },
       )
@@ -91,13 +107,31 @@ export function UpdatePasswordRestaurant() {
         <form onSubmit={handleSubmit(handleCreateRestaurant)}>
           <VStack spacing="8">
             <SimpleGrid minChildWidth="200px" w="100%" spacing="8">
-              <Input name="password" label="Nova Senha" register={register} />
-              <Input
-                name="confirmPassword"
-                label="Confirme sua senha"
-                register={register}
-              />
-              {/* <Input
+              <SimpleGrid>
+                <Input
+                  name="username"
+                  label="Email do gerente"
+                  value={restaurant.username}
+                  onChange={(e) =>
+                    setRestaurant({ ...restaurant, username: e.target.value })
+                  }
+                  register={register}
+                />
+              </SimpleGrid>
+              <SimpleGrid>
+                <Input
+                  name="password"
+                  label="Nova Senha"
+                  register={register}
+                  required={false}
+                />
+                <Input
+                  name="confirmPassword"
+                  label="Confirme sua senha"
+                  register={register}
+                  required={false}
+                />
+                {/* <Input
                   name="password"
                   label="Nova Senha"
                   register={register}
@@ -109,9 +143,10 @@ export function UpdatePasswordRestaurant() {
                   required={false}
                   register={register}
                 /> */}
+              </SimpleGrid>
             </SimpleGrid>
           </VStack>
-          <FormButton isDisable={isSubmitDisabled} buttonSubmitTitle="Editar" />
+          <FormButton isDisable={submited} buttonSubmitTitle="Editar" />
         </form>
       </CreateContent>
     </Box>
