@@ -33,7 +33,9 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
   useEffect(() => {
     const accessToken = Cookies.get('meu-garcom-web.token')
+    console.log(lastUserUpdate)
     if (accessToken) {
+      api.defaults.headers.Authorization = `Bearer ${accessToken}`
       api
         .get('/auth/restaurant-manager/me')
         .then((response) => {

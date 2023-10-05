@@ -1,12 +1,9 @@
 import { createContext, ReactNode, useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
 
-import { SessionInfo } from '../@types/Restaurant/user'
-import { api } from '../service/apiClient'
-import { SignInProps } from '../pages/SignIn'
+import { apiProvider as api } from '../service/apiProvider'
 import { SignInProviderProps } from '../pages/ProviderPages/SignInProvider'
 import { ProviderInfo } from '../@types/Provider/provider'
-import { differenceInMinutes } from 'date-fns'
 import { useNavigate } from 'react-router-dom'
 
 type AuthContextDataProps = {
@@ -39,6 +36,9 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     //   lastUserUpdate,
     // )
     if (accessToken) {
+      console.log(lastUserUpdate)
+
+      api.defaults.headers.Authorization = `Bearer ${accessToken}`
       api
         .get('auth/provider-manager/me', {
           headers: {

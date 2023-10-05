@@ -10,11 +10,12 @@ let isRefreshing = false
 let failedRequestsQueue: Array<PromiseType> = []
 
 export function setupAPIClient() {
+  const token = Cookies.get('meu-garcom-web.token')
   const api = axios.create({
     // 'http://localhost:3333',
     baseURL: 'https://api.meugarcon.com.br/',
     headers: {
-      Authorization: `Bearer ${Cookies.get('meu-garcom-web.token')}`,
+      Authorization: `Bearer ${token}`,
     },
   })
 
@@ -79,11 +80,14 @@ export function setupAPIClient() {
   return api
 }
 export function setupAPIProvider() {
+  const token = Cookies.get('meu-garcom-web.provider.token')
+
+  console.log('token => ', token)
   const api = axios.create({
     // 'http://localhost:3333',
     baseURL: 'https://api.meugarcon.com.br/',
     headers: {
-      Authorization: `Bearer ${Cookies.get('meu-garcom-web.provider.token')}`,
+      Authorization: `Bearer ${token}`,
     },
   })
 
