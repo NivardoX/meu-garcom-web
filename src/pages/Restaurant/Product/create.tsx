@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react'
 import { ImageInput } from './components/ImageInput'
 import { useAppToast } from '../../../hooks/useAppToast'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../../hooks/useAuth'
 
 export interface ICreateProduct {
   image?: File
@@ -45,6 +46,7 @@ export function CreateProduct() {
   const [productImage, setProductImage] = useState<File | undefined>(undefined)
   const [selectedCategory, setSelectedCategory] = useState<string>()
   const [storageCategory, setStorageCategory] = useState<string>('2')
+  const { restaurantSession } = useAuth()
 
   const { register, handleSubmit, reset } = useForm<ICreateProduct>({
     resolver: zodResolver(CreateProductValidationSchema),
@@ -101,7 +103,9 @@ export function CreateProduct() {
 
   async function getAllCategories() {
     try {
-      const response = await api.get(`/categories?page=1`)
+      const response = await api.get(
+        `/restaurant-manager/categories/${restaurantSession?.restaurantId}`,
+      )
       console.log(response.data.categories)
 
       setCategories(response.data.categories)

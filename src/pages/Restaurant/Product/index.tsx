@@ -12,6 +12,7 @@ import { EmptyState } from '../../../components/EmptyState'
 import { IoFastFoodOutline } from 'react-icons/io5'
 import { Loading } from '../../../components/Loading'
 import { useNavigate } from 'react-router-dom'
+import Pagination from '../../../components/Pagination'
 
 export type GetProductsResponse = {
   products: [
@@ -32,6 +33,8 @@ export type GetProductsResponse = {
       }
     },
   ]
+  numberOfPages: number
+  matchCount: number
 }
 
 export type ProductProps = {
@@ -61,13 +64,19 @@ export function Product() {
   const navigate = useNavigate()
   const { handleRequestError } = useAppToast()
   const [restaurantProduct, setRestaurantProduct] = useState<ProductProps[]>([])
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [totalItens, setTotalItens] = useState<number>(1)
   const [loadingProducts, setLoadingProducts] = useState<boolean>(false)
 
   async function getAllRestaurantProduct() {
     setLoadingProducts(true)
     try {
-      const response = await api.get<GetProductsResponse>(`/products?page=1`)
+      const response = await api.get<GetProductsResponse>(
+        `/products?page=${currentPage}`,
+      )
       console.log(response)
+      setTotalItens(response.data.matchCount)
+
       const products: ProductProps[] = response.data.products.map((product) => {
         return {
           id: product.id,
@@ -109,7 +118,7 @@ export function Product() {
 
   useEffect(() => {
     getAllRestaurantProduct()
-  }, [])
+  }, [currentPage])
 
   return (
     <Box w="100%">
@@ -143,6 +152,11 @@ export function Product() {
             })}
           </ChartContent>
         )}
+        <Pagination
+          currentPage={currentPage}
+          totalCountOfRegisters={totalItens}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
       </Chart>
     </Box>
   )

@@ -12,6 +12,7 @@ import { EmptyState } from '../../../components/EmptyState'
 import { AiOutlineTag } from 'react-icons/ai'
 import { Loading } from '../../../components/Loading'
 import { useNavigate } from 'react-router-dom'
+import Pagination from '../../../components/Pagination'
 
 export type CategoryResponse = {
   id: string
@@ -36,11 +37,16 @@ export function Category() {
   const { handleRequestError, handleRequestSuccess } = useAppToast()
   const [categories, setCategories] = useState<CategoryResponse[]>([])
   const [loadingCategories, setLoadingCategories] = useState<boolean>(false)
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [totalItens, setTotalItens] = useState<number>(1)
 
   async function getAllCategories() {
     setLoadingCategories(true)
     try {
-      const response = await api.get(`/categories?page=1`)
+      const response = await api.get(`/categories?page=${currentPage}`)
+      console.log(response)
+
+      setTotalItens(response.data.matchCount)
       setCategories(response.data.categories)
     } catch (error) {
       handleRequestError(error)
@@ -106,6 +112,11 @@ export function Category() {
             })}
           </ChartContent>
         )}
+        <Pagination
+          currentPage={currentPage}
+          totalCountOfRegisters={totalItens}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
       </Chart>
     </Box>
   )

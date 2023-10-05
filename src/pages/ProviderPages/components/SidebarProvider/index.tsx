@@ -7,6 +7,7 @@ import {
 } from './styles'
 import LogoImage from '../../../../assets/Logo.svg'
 import { IoRestaurantOutline } from 'react-icons/io5'
+import { VscWarning } from 'react-icons/vsc'
 import { IoIosLogOut } from 'react-icons/io'
 import { useAuth } from '../../../../hooks/useAuthProvider'
 
@@ -20,6 +21,11 @@ export function SideBarProvider() {
       <SideBarOptionContent to="/provider/restaurant">
         <IoRestaurantOutline size={33} color="#D1D2DC" />
         <SideBarName>Restaurantes</SideBarName>
+      </SideBarOptionContent>
+
+      <SideBarOptionContent to="/provider/restaurant/desactive">
+        <VscWarning size={33} color="#D1D2DC" />
+        <SideBarName>Restaurantes inativos</SideBarName>
       </SideBarOptionContent>
 
       <ExitButton

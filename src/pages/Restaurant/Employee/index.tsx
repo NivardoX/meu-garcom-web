@@ -12,6 +12,7 @@ import { EmptyState } from '../../../components/EmptyState'
 import { RxPerson } from 'react-icons/rx'
 import { Loading } from '../../../components/Loading'
 import { useNavigate } from 'react-router-dom'
+import Pagination from '../../../components/Pagination'
 
 type GetEmployeePropsResponse = {
   restaurantManagers: [
@@ -24,6 +25,8 @@ type GetEmployeePropsResponse = {
       createdAt: Date
     },
   ]
+  matchCount: number
+  numberOfPages: number
 }
 
 type EmployeeProps = {
@@ -45,14 +48,18 @@ export function Employee() {
   const { handleRequestError, handleRequestSuccess } = useAppToast()
   const [employee, setEmployee] = useState<EmployeeProps[]>([])
   const [loadingEmployees, setLoadingEmployees] = useState<boolean>(false)
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [totalItens, setTotalItens] = useState<number>(1)
 
   async function getAllEmployee() {
     setLoadingEmployees(true)
     try {
       const response = await api.get<GetEmployeePropsResponse>(
-        `/restaurant-manager?page=1`,
+        `/restaurant-manager?page=${currentPage}`,
       )
+
       const employees: EmployeeProps[] = response.data.restaurantManagers
+      setTotalItens(response.data.matchCount)
       setEmployee(employees)
     } catch (error) {
       handleRequestError(error)
@@ -80,7 +87,7 @@ export function Employee() {
   }
   useEffect(() => {
     getAllEmployee()
-  }, [])
+  }, [currentPage])
 
   return (
     <Box w="100%">
@@ -114,6 +121,11 @@ export function Employee() {
             })}
           </ChartContent>
         )}
+        <Pagination
+          currentPage={currentPage}
+          totalCountOfRegisters={totalItens}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
       </Chart>
     </Box>
   )

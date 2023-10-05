@@ -36,9 +36,9 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     //   lastUserUpdate,
     // )
     if (accessToken) {
+      api.defaults.headers.Authorization = `Bearer ${accessToken}`
       console.log(lastUserUpdate)
 
-      api.defaults.headers.Authorization = `Bearer ${accessToken}`
       api
         .get('auth/provider-manager/me', {
           headers: {
@@ -85,6 +85,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         password: providerCredentials.password,
       })
       const { accessToken, user } = response.data
+      api.defaults.headers.Authorization = `Bearer ${accessToken}`
       setProviderSession(user)
       Cookies.set('meu-garcom-web.provider.token', accessToken, {
         expires: 30,

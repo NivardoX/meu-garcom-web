@@ -27,16 +27,6 @@ type WaiterProps = {
   username: string
   restaurantId: string
 }
-type GetWaiterResponse = {
-  waiters: [
-    {
-      id: string
-      name: string
-      username: string
-      restaurantId: string
-    },
-  ]
-}
 
 export function TableOrder() {
   const { handleRequestSuccess, handleRequestError } = useAppToast()
@@ -57,8 +47,12 @@ export function TableOrder() {
 
   async function getAllWaiters() {
     try {
-      const response = await api.get<GetWaiterResponse>(`/waiters?page=1`)
-      const waiters: WaiterProps[] = response.data.waiters
+      console.log(restaurantSession)
+
+      const response = await api.get<WaiterProps[]>(
+        `/restaurant-manager/waiters/${restaurantSession?.restaurantId}`,
+      )
+      const waiters: WaiterProps[] = response.data
       setWaiter(waiters)
     } catch (error) {
       handleRequestError(error)

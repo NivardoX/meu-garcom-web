@@ -74,7 +74,7 @@ export function ChartItems<T>(props: ChartItemsProps<T>) {
               marginLeft={2}
               onClick={props.onPassword}
             >
-              senha
+              Senha
             </Button>
           )}
           {props.expires ? (

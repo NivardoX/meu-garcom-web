@@ -28,7 +28,7 @@ export function Restaurant() {
 
   useEffect(() => {
     apiProvider
-      .get(`restaurant/true?page=${currentPage}`)
+      .get(`restaurant/false?page=${currentPage}`)
       .then((response) => {
         setItemData(response.data.restaurants)
         setTotalItens(response.data.matchCount)
@@ -43,9 +43,7 @@ export function Restaurant() {
   const handleOpenEditRestaurant = (restaurant: any) => {
     navigate('update', { state: restaurant })
   }
-  const handleOpenEditPasswordRestaurant = (restaurant: any) => {
-    navigate('updatePassword', { state: restaurant })
-  }
+
   return (
     <Box w="100%" height={'100%'}>
       <Chart headingTitle="Restaurantes" href="/provider/restaurant/create/">
@@ -57,9 +55,7 @@ export function Restaurant() {
                 data={element}
                 key={index}
                 expires={true}
-                password
                 onEdit={() => handleOpenEditRestaurant(element)}
-                onPassword={() => handleOpenEditPasswordRestaurant(element)}
                 onExpires={() => handleOpenUpdateExpires(element)}
               />
             )

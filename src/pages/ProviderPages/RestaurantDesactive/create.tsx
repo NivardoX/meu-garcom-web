@@ -1,4 +1,4 @@
-import { Box, SimpleGrid, VStack } from '@chakra-ui/react'
+import { Box, Button, SimpleGrid, VStack } from '@chakra-ui/react'
 import { CreateContent } from '../../../components/CreateContent'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -8,7 +8,6 @@ import { Input } from '../../../components/Input'
 import { apiProvider } from '../../../service/apiProvider'
 import { useNavigate } from 'react-router-dom'
 import React, { useState } from 'react'
-import { useAppToast } from '../../../hooks/useAppToast'
 
 export type CreateRestaurantProps = {
   restaurantName: string
@@ -30,20 +29,29 @@ const CreateRestaurantValidationSchema = zod.object({
 })
 
 export function CreateRestaurant() {
-  const [submited, setSubmited] = useState<boolean>(false)
   const [maxTables, setMaxTables] = useState()
-  const { handleRequestError, handleRequestSuccess } = useAppToast()
   const navigate = useNavigate()
-  const { register, handleSubmit, reset } = useForm<CreateRestaurantProps>({
-    resolver: zodResolver(CreateRestaurantValidationSchema),
-    defaultValues: {
-      restaurantName: '',
-      restaurantManagerName: '',
-      restaurantUsernameRestaurant: '',
-      restaurantPassword: '',
-      restaurantConfirmPassword: '',
-    },
-  })
+  const { register, handleSubmit, watch, formState, reset } =
+    useForm<CreateRestaurantProps>({
+      resolver: zodResolver(CreateRestaurantValidationSchema),
+      defaultValues: {
+        restaurantName: '',
+        restaurantManagerName: '',
+        restaurantUsernameRestaurant: '',
+        restaurantPassword: '',
+        restaurantConfirmPassword: '',
+      },
+    })
+
+  const observerContentForm = watch([
+    'restaurantName',
+    'restaurantManagerName',
+    'restaurantUsernameRestaurant',
+    'restaurantPassword',
+    'restaurantConfirmPassword',
+    'expiresAt',
+  ])
+  const isSubmitDisabled: boolean = !observerContentForm
 
   const handleCreateRestaurant = async ({
     ...props
@@ -53,7 +61,6 @@ export function CreateRestaurant() {
     })
 
     try {
-      setSubmited(true)
       const response = await apiProvider.post('/restaurant', {
         restaurantName: props.restaurantName,
         managerName: props.restaurantManagerName,
@@ -64,13 +71,10 @@ export function CreateRestaurant() {
       })
 
       console.log('createRestaurant Response =>', response)
-      handleRequestSuccess('Restaurante atualizado com sucesso!')
       reset()
       navigate('/provider/restaurant')
     } catch (error) {
       console.log(error)
-      handleRequestError('')
-      setSubmited(false)
     }
   }
   return (
@@ -119,7 +123,7 @@ export function CreateRestaurant() {
               />
             </SimpleGrid>
           </VStack>
-          <FormButton isDisable={submited} />
+          <FormButton isDisable={isSubmitDisabled} />
         </form>
       </CreateContent>
     </Box>

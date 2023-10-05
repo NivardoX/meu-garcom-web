@@ -47,6 +47,8 @@ export function Waiter() {
     setLoadingWaiters(true)
     try {
       const response = await api.get<GetWaiterResponse>(`/waiters?page=1`)
+      console.log(response)
+
       const waiters: WaiterProps[] = response.data.waiters
       setWaiter(waiters)
     } catch (error) {

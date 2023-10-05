@@ -12,6 +12,7 @@ import { api } from '../../../service/apiClient'
 import { CategoryResponse, CategoryStorage } from '../Category'
 import { useAppToast } from '../../../hooks/useAppToast'
 import { ImageInput } from './components/ImageInput'
+import { useAuth } from '../../../hooks/useAuth'
 
 type ProductsResponse = {
   products: [
@@ -55,6 +56,7 @@ export function UpdateProduct() {
   const [productImage, setProductImage] = useState<File | undefined>(undefined)
   const product = location.state as ProductsResponse['products'][0]
   const [categories, setCategories] = useState<CategoryResponse[]>([])
+  const { restaurantSession } = useAuth()
   const [selectedCategory, setSelectedCategory] = useState<string>(
     product.product.category?.id,
   )
@@ -123,7 +125,11 @@ export function UpdateProduct() {
 
   async function getAllCategories() {
     try {
-      const response = await api.get(`/categories?page=1`)
+      const response = await api.get(
+        `/restaurant-manager/categories/${restaurantSession?.restaurantId}`,
+      )
+      console.log(response)
+
       setCategories(response.data.categories)
     } catch (error) {
       console.log('ERROR =>', error)

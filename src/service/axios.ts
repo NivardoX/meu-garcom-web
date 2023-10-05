@@ -92,7 +92,7 @@ export function setupAPIProvider() {
   })
 
   async function signOut() {
-    // Cookies.remove('meu-garcom-web.provider.token')
+    Cookies.remove('meu-garcom-web.provider.token')
   }
 
   api.interceptors.response.use(
