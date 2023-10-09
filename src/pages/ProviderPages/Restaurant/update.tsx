@@ -27,34 +27,44 @@ export function UpdateRestaurant() {
   const { handleRequestError, handleRequestSuccess } = useAppToast()
   const product = location.state
   useEffect(() => {
-    console.log(product.maxTables)
+    console.log(product)
   }, [])
   const [submited, setSubmited] = useState<boolean>(false)
   const [productImage, setProductImage] = useState<File | undefined>(undefined)
-  const { register, handleSubmit, watch, reset } =
-    useForm<CreateRestaurantProps>({
-      resolver: zodResolver(CreateRestaurantValidationSchema),
-      defaultValues: {
-        name: product.name,
-        maxTables: String(product.maxTables),
-      },
-    })
-  const observerContentForm = watch(['name', 'maxTables'])
-  const isSubmitDisabled: boolean = !observerContentForm
+  const { register, handleSubmit, reset } = useForm<CreateRestaurantProps>({
+    resolver: zodResolver(CreateRestaurantValidationSchema),
+    defaultValues: {
+      name: product.name,
+      maxTables: String(product.maxTables),
+    },
+  })
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
+
     setProductImage(file)
   }
   const handleCreateRestaurant = async ({
     ...props
   }: CreateRestaurantProps) => {
+    console.log({
+      name: props.name,
+      maxTables: props.maxTables,
+      banner: productImage,
+    })
+    const formData = new FormData()
+    Object.entries(props).forEach((entry) => {
+      const [key, value] = entry
+
+      formData.append(key, String(value))
+    })
+    if (productImage) {
+      console.log(productImage)
+
+      formData.append('banner', productImage)
+    }
     try {
       setSubmited(!submited)
-      await apiProvider.put('/restaurant/' + product.id, {
-        name: props.name,
-        maxTables: Number(props.maxTables),
-        banner: productImage,
-      })
+      await apiProvider.put('/restaurant/' + product.id, formData)
       reset()
       handleRequestSuccess('Restaurante atualizado com sucesso!')
       navigate(-1)

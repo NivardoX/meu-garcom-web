@@ -9,22 +9,22 @@ import { apiProvider } from '../../../service/apiProvider'
 import { useNavigate } from 'react-router-dom'
 import React, { useState } from 'react'
 import { useAppToast } from '../../../hooks/useAppToast'
+import { ImageInput } from '../../Restaurant/Product/components/ImageInput'
 
 export type CreateRestaurantProps = {
   restaurantName: string
-  restaurantManagerName: string
-  restaurantUsernameRestaurant: string
-  restaurantPassword: string
+  managerName: string
+  username: string
+  password: string
   restaurantConfirmPassword: string
   expiresAt: Date
 }
 
 const CreateRestaurantValidationSchema = zod.object({
   restaurantName: zod.string().min(1, 'Informe a categoria do produto'),
-  restaurantManagerName: zod.string().min(1, 'Informe o preço do produto'),
-  restaurantUsernameRestaurant: zod
-    .string()
-    .min(1, 'Informe a descrição do produto'),
+  managerName: zod.string().min(1, 'Informe o preço do produto'),
+  username: zod.string().min(1, 'Informe a descrição do produto'),
+  password: zod.string().min(6, 'Informe a descrição do produto'),
   restaurantConfirmPassword: zod.string().min(1, 'Informe o preço do produto'),
   expiresAt: zod.string().min(1, 'Informe a Categoria'),
 })
@@ -33,35 +33,48 @@ export function CreateRestaurant() {
   const [submited, setSubmited] = useState<boolean>(false)
   const [maxTables, setMaxTables] = useState()
   const { handleRequestError, handleRequestSuccess } = useAppToast()
+  const [productImage, setProductImage] = useState<File | undefined>(undefined)
+
   const navigate = useNavigate()
   const { register, handleSubmit, reset } = useForm<CreateRestaurantProps>({
     resolver: zodResolver(CreateRestaurantValidationSchema),
     defaultValues: {
       restaurantName: '',
-      restaurantManagerName: '',
-      restaurantUsernameRestaurant: '',
-      restaurantPassword: '',
+      managerName: '',
+      username: '',
+      password: '',
       restaurantConfirmPassword: '',
     },
   })
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    setProductImage(file)
+  }
 
   const handleCreateRestaurant = async ({
     ...props
   }: CreateRestaurantProps) => {
-    console.log('oi', {
-      props,
+    const formData = new FormData()
+    Object.entries(props).forEach((entry) => {
+      const [key, value] = entry
+      console.log(key)
+      if (key === 'expiresAt') {
+        const date = new Date(value)
+        return formData.append(key, date.toISOString())
+      }
+
+      formData.append(key, String(value))
     })
+    if (productImage) {
+      console.log(productImage)
+
+      formData.append('banner', productImage)
+    }
+    formData.append('maxTables', String(maxTables))
 
     try {
       setSubmited(true)
-      const response = await apiProvider.post('/restaurant', {
-        restaurantName: props.restaurantName,
-        managerName: props.restaurantManagerName,
-        username: props.restaurantUsernameRestaurant,
-        password: props.restaurantConfirmPassword,
-        expiresAt: new Date(props.expiresAt),
-        maxTables: Number(maxTables),
-      })
+      const response = await apiProvider.post('/restaurant', formData)
 
       console.log('createRestaurant Response =>', response)
       handleRequestSuccess('Restaurante atualizado com sucesso!')
@@ -85,17 +98,17 @@ export function CreateRestaurant() {
                 register={register}
               />
               <Input
-                name="restaurantManagerName"
+                name="managerName"
                 label="Nome do gerente"
                 register={register}
               />
               <Input
-                name="restaurantUsernameRestaurant"
+                name="username"
                 label="Email do restaurante"
                 register={register}
               />
               <Input
-                name="restaurantPassword"
+                name="password"
                 label="Senha do restaurante"
                 register={register}
               />
@@ -116,6 +129,13 @@ export function CreateRestaurant() {
                 type="number"
                 onChange={(e: any) => setMaxTables(e.target.value)}
                 register={register}
+              />
+              <ImageInput
+                name="banner"
+                label="Imagem do Produto:"
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  handleImageChange(event)
+                }
               />
             </SimpleGrid>
           </VStack>
