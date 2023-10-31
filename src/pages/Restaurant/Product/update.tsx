@@ -27,6 +27,7 @@ type ProductsResponse = {
         availableAmount: number
         availabilityType: string
         estimatedMinutesToPrepare: number
+        isAvailable: boolean
         category: {
           id: string
           name: string
@@ -54,6 +55,8 @@ export function UpdateProduct() {
   const location = useLocation()
   const { handleRequestError, handleRequestSuccess } = useAppToast()
   const [productImage, setProductImage] = useState<File | undefined>(undefined)
+  const [disable, setDisable] = useState<boolean>(false)
+  const [aviable, setAviable] = useState<boolean>(false)
   const product = location.state as ProductsResponse['products'][0]
   const [categories, setCategories] = useState<CategoryResponse[]>([])
   const { restaurantSession } = useAuth()
@@ -82,6 +85,7 @@ export function UpdateProduct() {
       estimatedMinutesToPrepare:
         product.product.estimatedMinutesToPrepare.toString() || '',
       availableAmount: product.product.availableAmount.toString() || '',
+      isAvailable: product.product.isAvailable,
     },
   })
 
@@ -91,7 +95,37 @@ export function UpdateProduct() {
   }
 
   const onSubmit = async (data: UpdateProductProps) => {
+    setDisable(true)
     data.priceInCents = data.priceInCents.replace(/\D/g, '')
+    if (Number(data.estimatedMinutesToPrepare) < 0) {
+      setDisable(false)
+      return handleRequestError(
+        '',
+        'O Tempo de Preparo Não Pode Ser Menor Que 0',
+      )
+    }
+    if (Number(data.availableAmount) < 0) {
+      setDisable(false)
+      return handleRequestError(
+        '',
+        'A Quantidade de Produtos Não Pode Ser Menor Que 0',
+      )
+    }
+    if (Number(data.priceInCents) <= 0) {
+      setDisable(false)
+      return handleRequestError(
+        '',
+        'O Preço do Produtos Não Pode Ser Menor ou Igual a 0',
+      )
+    }
+
+    if (Number.isNaN(Number(data.availableAmount))) {
+      setDisable(false)
+      return handleRequestError(
+        '',
+        'A Quantidade de Produtos Deve ser Um Numero!',
+      )
+    }
 
     const formData = new FormData()
     Object.entries(data).forEach((entry) => {
@@ -120,6 +154,8 @@ export function UpdateProduct() {
     } catch (error) {
       handleRequestError(error)
       console.log(error)
+    } finally {
+      setDisable(false)
     }
   }
 
@@ -139,7 +175,11 @@ export function UpdateProduct() {
   // console.log('PRODUCT IMAGE =>', product.product)
 
   useEffect(() => {
+    console.log(product.product)
     getAllCategories()
+    if (product.product.availabilityType === 'QUANTITY') {
+      setAviable(true)
+    }
   }, [])
 
   return (
@@ -168,14 +208,16 @@ export function UpdateProduct() {
           label="Tempo estimado para o preparo"
           register={register}
         />
-        <Input
-          name="availableAmount"
-          label="Quantidade disponível"
-          register={register}
-        />
+        {aviable ? (
+          <Input
+            name="availableAmount"
+            label="Quantidade disponível"
+            register={register}
+          />
+        ) : null}
         <Select
           name="categoryId"
-          label="Categoria"
+          label="Categoria do Produto:"
           register={register}
           category={categories}
           value={selectedCategory}
@@ -190,6 +232,7 @@ export function UpdateProduct() {
           category={categoriesStorage}
           value={storageCategory}
           onChange={(event) => {
+            setAviable(!aviable)
             setStorageCategory(event.target.value)
           }}
         />
@@ -201,7 +244,7 @@ export function UpdateProduct() {
             handleImageChange(event)
           }
         />
-        <FormButton isDisable={false} buttonSubmitTitle="Editar" />
+        <FormButton isDisable={disable} buttonSubmitTitle="Editar" />
       </form>
     </Chart>
   )

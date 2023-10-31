@@ -25,6 +25,7 @@ export type GetProductsResponse = {
       priceInCents: number
       availabilityType: string
       availableAmount: number
+      isAvailable: boolean
       estimatedMinutesToPrepare: number
       category: {
         id: string
@@ -47,6 +48,7 @@ export type ProductProps = {
   availableAmount: number
   estimatedMinutesToPrepare: number
   categoryName?: string
+  isAvailable: boolean
   category: {
     id: string
     name: string
@@ -62,7 +64,7 @@ const chartProperty: ChartItemsProperty<ProductProps> = {
 
 export function Product() {
   const navigate = useNavigate()
-  const { handleRequestError } = useAppToast()
+  const { handleRequestError, handleRequestSuccess } = useAppToast()
   const [restaurantProduct, setRestaurantProduct] = useState<ProductProps[]>([])
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [totalItens, setTotalItens] = useState<number>(1)
@@ -89,6 +91,7 @@ export function Product() {
           availabilityType: product.availabilityType,
           estimatedMinutesToPrepare: product.estimatedMinutesToPrepare,
           categoryName: product.category?.name,
+          isAvailable: product.isAvailable,
           category: product.category,
         }
       })
@@ -107,8 +110,10 @@ export function Product() {
       setLoadingProducts(true)
       await api.delete(`/products/${id}`)
       getAllRestaurantProduct()
+      handleRequestSuccess('Produto Excluído!')
     } catch (error) {
       console.log(error)
+      handleRequestError(error)
     }
   }
 
