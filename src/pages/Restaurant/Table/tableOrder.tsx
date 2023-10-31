@@ -159,30 +159,39 @@ export function TableOrder() {
             }
           />
         ) : (
-          table.tableSession?.orders.map((order: any, orderIndex: any) => {
-            return (
-              <Accordion key={orderIndex} title={`Pedido #${order.id}`}>
-                {order.products.map(
-                  (product: OrderProducts, productIndex: number) => {
-                    return (
-                      <RequestBox key={productIndex}>
-                        <RequestContent
-                          requestProductName={product.name}
-                          requestProductStatus={product.status}
-                          requestProductImage={product.imageUrl}
-                        />
-                        <ButtonStatusOrder
-                          requestStatus={product.status}
-                          productId={product.id}
-                          orderId={order.id}
-                        />
-                      </RequestBox>
-                    )
-                  },
-                )}
-              </Accordion>
-            )
-          })
+          table.tableSession?.orders
+            .reverse()
+            .map((order: any, orderIndex: any) => {
+              const status = order.status
+
+              return (
+                <Accordion
+                  key={orderIndex}
+                  title={`Pedido #${order.id}`}
+                  status={status}
+                >
+                  {order.products.map(
+                    (product: OrderProducts, productIndex: number) => {
+                      return (
+                        <RequestBox key={productIndex}>
+                          <RequestContent
+                            requestProductName={product.name}
+                            requestProductStatus={product.status}
+                            requestProductImage={product.imageUrl}
+                            requestProductNumber={product.amount}
+                          />
+                          <ButtonStatusOrder
+                            requestStatus={product.status}
+                            productId={product.id}
+                            orderId={order.id}
+                          />
+                        </RequestBox>
+                      )
+                    },
+                  )}
+                </Accordion>
+              )
+            })
         )}
         {table.waiterId === null && (
           <VStack mt={25}>

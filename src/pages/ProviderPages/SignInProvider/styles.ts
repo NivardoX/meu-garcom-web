@@ -7,9 +7,8 @@ export const SignInContainer = styled.div`
 
   justify-content: center;
   align-items: center;
-  background-image: url("https://img.freepik.com/free-vector/vector-seamless-food-chalkboard-wallpapers-mostly-used-restaurants-designs_1284-43589.jpg?w=826&t=st=1685645708~exp=1685646308~hmac=163b13b819e9bef4a753c0733dca7573ce11045ae058bee12005caa2ff68ab26");
-  `
-
+  background-image: url('https://img.freepik.com/free-vector/vector-seamless-food-chalkboard-wallpapers-mostly-used-restaurants-designs_1284-43589.jpg?w=826&t=st=1685645708~exp=1685646308~hmac=163b13b819e9bef4a753c0733dca7573ce11045ae058bee12005caa2ff68ab26');
+`
 
 export const SignInContent = styled.div`
   display: flex;
@@ -45,6 +44,10 @@ export const SignInButton = styled.button`
   font-size: 18px;
   font-weight: bold;
   color: #000;
+  transition: 0.2s;
+  :hover {
+    background-color: #ccc;
+  }
 `
 
 export const SignInFormContent = styled.form`

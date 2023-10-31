@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom'
 import React, { useState } from 'react'
 import { useAppToast } from '../../../hooks/useAppToast'
 import { ImageInput } from '../../Restaurant/Product/components/ImageInput'
+import { InputPassword } from '../../../components/Input/Password'
 
 export type CreateRestaurantProps = {
   restaurantName: string
@@ -107,14 +108,16 @@ export function CreateRestaurant() {
                 label="Email do restaurante"
                 register={register}
               />
-              <Input
+              <InputPassword
                 name="password"
                 label="Senha do restaurante"
+                type="password"
                 register={register}
               />
-              <Input
+              <InputPassword
                 name="restaurantConfirmPassword"
                 label="Confirmar senha"
+                type="password"
                 register={register}
               />
               <Input

@@ -11,11 +11,15 @@ import { ReactNode } from 'react'
 type AccordionProps = {
   title: string
   children: ReactNode
+  status: string
 }
 
-export function Accordion({ title, children }: AccordionProps) {
+export function Accordion({ title, children, status }: AccordionProps) {
   return (
-    <ChakraAccordion defaultIndex={[-1]} allowMultiple>
+    <ChakraAccordion
+      defaultIndex={status === 'REQUESTED' ? [0] : [-1]}
+      allowMultiple
+    >
       <AccordionItem border="none">
         <h2>
           <AccordionButton>

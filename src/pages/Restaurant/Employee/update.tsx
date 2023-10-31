@@ -42,9 +42,6 @@ export function UpdateEmployee() {
 
   const handleUpdateEmployee = async (form: UpdateEmployeeProps) => {
     console.log(form, employee.name)
-    if (form.name === employee.name) {
-      return handleRequestError('error', 'Não houve mudança de nome')
-    }
 
     try {
       const response = await api.put(`/restaurant-manager/${employee.id}`, form)

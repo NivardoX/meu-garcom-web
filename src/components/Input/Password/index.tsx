@@ -6,6 +6,7 @@ import {
   InputGroup,
   InputRightElement,
   Tooltip,
+  FormControl,
 } from '@chakra-ui/react'
 import { useState } from 'react'
 
@@ -27,9 +28,10 @@ export function InputPassword({
 }: InputPasswordProps) {
   const [show, setShow] = useState(false)
   const handleClick = () => setShow(!show)
+  console.log(props.name)
 
   return (
-    <>
+    <FormControl>
       {!!props.label && (
         <FormLabel display={'flex'} htmlFor={props.name}>
           {props.label}
@@ -57,12 +59,7 @@ export function InputPassword({
           )}
         </FormLabel>
       )}
-      <InputGroup
-        size="md"
-        display="flex"
-        alignItems={'center'}
-        justifyContent={'center'}
-      >
+      <InputGroup size="md">
         <ChakraInput
           autoComplete="off"
           focusBorderColor="pink.500"
@@ -93,6 +90,6 @@ export function InputPassword({
           </Button>
         </InputRightElement>
       </InputGroup>
-    </>
+    </FormControl>
   )
 }

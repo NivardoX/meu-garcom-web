@@ -49,7 +49,7 @@ export function Storage(props: SelectProps) {
         {...props.register(props.name)}
         value={props.value ?? props.defaultValue ?? ''}
         focusBorderColor="gray.500"
-        bgColor="gray.900"
+        bgColor="gray"
         textColor="white"
         variant="filled"
         size="lg"

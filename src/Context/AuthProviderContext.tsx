@@ -5,6 +5,7 @@ import { apiProvider as api } from '../service/apiProvider'
 import { SignInProviderProps } from '../pages/ProviderPages/SignInProvider'
 import { ProviderInfo } from '../@types/Provider/provider'
 import { useNavigate } from 'react-router-dom'
+import { useAppToast } from '../hooks/useAppToast'
 
 type AuthContextDataProps = {
   signInProvider: (providerCredentials: SignInProviderProps) => Promise<void>
@@ -26,6 +27,8 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const [providerSession, setProviderSession] = useState<ProviderInfo | null>(
     null,
   )
+  const { handleRequestError, handleRequestSuccess } = useAppToast()
+
   const [lastUserUpdate, setLastUserUpdate] = useState<Date>(new Date())
   const isAuthenticated = !!providerSession
 
@@ -91,8 +94,10 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         expires: 30,
         path: '/',
       })
+      handleRequestSuccess('Bem Vindo!')
     } catch (error) {
       console.log('Sign In Error =>', error)
+      handleRequestError(error)
     }
   }
 

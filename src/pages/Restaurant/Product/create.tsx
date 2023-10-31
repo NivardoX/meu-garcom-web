@@ -17,7 +17,7 @@ import { useAuth } from '../../../hooks/useAuth'
 
 export interface ICreateProduct {
   image?: File
-  categoryId: string
+  // categoryId: string
   availabilityType: string
   name: string
   description: string
@@ -26,7 +26,7 @@ export interface ICreateProduct {
 }
 
 const CreateProductValidationSchema = zod.object({
-  categoryId: zod.string().min(1, 'Informe a categoria do produto'),
+  // categoryId: zod.string().min(1, 'Informe a categoria do produto'),
   name: zod.string().min(1, 'Informe o nome'),
   description: zod.string().min(1, 'Informe a descrição do produto'),
   priceInCents: zod.string().min(1, 'Informe o preço do produto'),
@@ -44,18 +44,18 @@ export function CreateProduct() {
     { name: 'Disponibilidade', id: '2' },
   ])
   const [productImage, setProductImage] = useState<File | undefined>(undefined)
-  const [selectedCategory, setSelectedCategory] = useState<string>()
+  const [selectedCategory, setSelectedCategory] = useState<string>('')
   const [storageCategory, setStorageCategory] = useState<string>('2')
   const { restaurantSession } = useAuth()
 
   const { register, handleSubmit, reset } = useForm<ICreateProduct>({
     resolver: zodResolver(CreateProductValidationSchema),
     defaultValues: {
-      categoryId: '',
+      // categoryId: '',
       availabilityType: '',
       name: '',
       description: '',
-      priceInCents: '',
+      priceInCents: 'R$ 0,00',
       estimatedMinutesToPrepare: '',
     },
   })
@@ -70,6 +70,7 @@ export function CreateProduct() {
 
       formData.append(key, value)
     })
+    formData.append('categoryId', selectedCategory)
     if (form.priceInCents === '000') {
       console.log(form.priceInCents)
 
@@ -106,13 +107,19 @@ export function CreateProduct() {
       const response = await api.get(
         `/restaurant-manager/categories/${restaurantSession?.restaurantId}`,
       )
-      console.log(response.data.categories)
+      console.log(response.data.categories[0].id)
 
       setCategories(response.data.categories)
       setSelectedCategory(response.data.categories[0].id)
+      // register('categoryId', response.data.categories[0].id)
     } catch (error) {
       console.log('ERROR =>', error)
     }
+  }
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    setProductImage(file)
+    console.log('imagem', file)
   }
 
   const handleCategoryChange = (
@@ -120,12 +127,6 @@ export function CreateProduct() {
   ) => {
     console.log(event.target.value)
     setSelectedCategory(event.target.value)
-  }
-
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    setProductImage(file)
-    console.log('imagem', file)
   }
 
   useEffect(() => {
@@ -185,6 +186,7 @@ export function CreateProduct() {
             category={categoriesStorage}
             value={storageCategory}
             onChange={(event) => {
+              console.log(event.target.value)
               setStorageCategory(event.target.value)
             }}
           />

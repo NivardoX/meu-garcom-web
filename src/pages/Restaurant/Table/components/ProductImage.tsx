@@ -12,7 +12,7 @@ export function ProductImage({ url }: ProductImageProps) {
         boxSize="55px"
         objectFit="cover"
         src={url || 'https://bit.ly/dan-abramov'}
-        alt="Dan Abramov"
+        alt="image"
       />
     </Stack>
   )
