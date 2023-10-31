@@ -49,7 +49,7 @@ export function Select(props: SelectProps) {
         {...props.register(props.name)}
         value={props.value ?? props.defaultValue ?? ''}
         focusBorderColor="gray.500"
-        bgColor="gray"
+        bgColor="gray.900"
         textColor="white"
         variant="filled"
         size="lg"
