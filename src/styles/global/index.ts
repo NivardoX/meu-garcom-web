@@ -10,12 +10,4 @@ export const GlobalStyles = createGlobalStyle`
 button{
   cursor: pointer;
 }
-select {
-  background-color: #000000;
-  color: #ffffff;
-
-  option: {
-    color: #000000;
-  }
-}
 `

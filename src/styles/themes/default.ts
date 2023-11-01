@@ -27,6 +27,9 @@ export const defaultTheme = extendTheme({
       body: {
         bg: 'gray.900',
         color: 'gray.50',
+        option: {
+          background: ' #181B23 !important',
+        },
       },
     },
   },
