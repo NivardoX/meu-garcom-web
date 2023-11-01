@@ -7,26 +7,32 @@ import { apiProvider } from '../../../service/apiProvider'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { useAppToast } from '../../../hooks/useAppToast'
+import * as zod from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 export type CreateRestaurantProps = {
   expiresAt: Date
 }
+const CreateRestaurantValidationSchema = zod.object({
+  expiresAt: zod.string().min(1, 'Informe a Categoria'),
+})
 
 export function ExpiresRestaurant() {
   const [submited, setSubmited] = useState<boolean>(false)
   const location = useLocation()
   const navigate = useNavigate()
   const product = location.state
-  const { register, handleSubmit, reset } = useForm<CreateRestaurantProps>()
+  const { register, handleSubmit, reset } = useForm<CreateRestaurantProps>({
+    resolver: zodResolver(CreateRestaurantValidationSchema),
+    defaultValues: {
+      expiresAt: product.expiresAt.substr(0, 10),
+    },
+  })
   const { handleRequestError, handleRequestSuccess } = useAppToast()
 
   const handleCreateRestaurant = async ({
     ...props
   }: CreateRestaurantProps) => {
-    console.log(product.id, {
-      props,
-    })
-
     try {
       setSubmited(!submited)
       const response = await apiProvider.patch(
@@ -42,7 +48,7 @@ export function ExpiresRestaurant() {
       reset()
     } catch (error) {
       console.log(error)
-      handleRequestError('')
+      handleRequestError(error)
     }
   }
   return (

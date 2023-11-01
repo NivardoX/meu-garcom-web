@@ -7,8 +7,9 @@ import { FormButton } from '../../../components/Form/FormButton'
 import { Input } from '../../../components/Input'
 import { apiProvider } from '../../../service/apiProvider'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
 import { useAppToast } from '../../../hooks/useAppToast'
+import { InputPassword } from '../../../components/Input/Password'
+import { useState } from 'react'
 
 export type CreateRestaurantProps = {
   username: string
@@ -27,64 +28,39 @@ export type RestaurantProps = {
 
 const CreateRestaurantValidationSchema = zod.object({
   username: zod.string().email(),
-  password: zod
-    .string()
-    .min(6, 'Informe a nova senha do restaurante')
-    .optional(),
-  confirmPassword: zod.string().min(6, 'Confirme sua senha').optional(),
+  password: zod.string().optional(),
+  confirmPassword: zod.string().optional(),
 })
 
 export function UpdatePasswordRestaurant() {
   const navigate = useNavigate()
   const location = useLocation()
-  const [restaurant, setRestaurant] = useState<RestaurantProps>(
-    {} as RestaurantProps,
-  )
   const { handleRequestError, handleRequestSuccess } = useAppToast()
   const [submited, setSubmited] = useState<boolean>(false)
-  const product: RestaurantProps = location.state
-  useEffect(() => {
-    console.log(product)
+  const restaurant: RestaurantProps = location.state
 
-    const handleGetRestaurant = async () => {
-      try {
-        const { data } = await apiProvider.get<RestaurantProps[]>(
-          '/restaurant-manager/all',
-        )
-        //  console.log(data.find((res: any) => res.restaurantId === product.id))
-        const res: RestaurantProps = data.find(
-          (res: RestaurantProps) => res.restaurantId === product.id,
-        ) as RestaurantProps
-        setRestaurant(res)
-      } catch (error) {
-        handleRequestError('')
-        navigate(-1)
-      }
-    }
-    handleGetRestaurant()
-  }, [])
-
-  const { register, handleSubmit, watch, reset } =
-    useForm<CreateRestaurantProps>({
-      resolver: zodResolver(CreateRestaurantValidationSchema),
-      defaultValues: {
-        username: '',
-        password: '',
-        confirmPassword: '',
-      },
-    })
-  const observerContentForm = watch(['username', 'password', 'confirmPassword'])
-  const isSubmitDisabled: boolean = !observerContentForm
+  const { register, handleSubmit, reset } = useForm<CreateRestaurantProps>({
+    resolver: zodResolver(CreateRestaurantValidationSchema),
+    defaultValues: {
+      username: restaurant.username,
+      password: '',
+      confirmPassword: '',
+    },
+  })
   const handleCreateRestaurant = async ({
     ...props
   }: CreateRestaurantProps) => {
-    console.log(restaurant.username)
-    setSubmited(!submited)
+    if (props.password !== props.confirmPassword) {
+      return handleRequestError('', 'As senhas devem ser iguais!')
+    }
+    if (props.password.length < 6 && props.password.length > 0) {
+      return handleRequestError(
+        '',
+        'As senhas devem ter no minimo 6 caracteres',
+      )
+    }
     try {
-      if (props.password !== props.confirmPassword) {
-        setSubmited(false)
-        return handleRequestError('')
-      }
+      setSubmited(true)
       await apiProvider.put(
         '/restaurant-manager/' + restaurant.id + '/provider',
         {
@@ -97,8 +73,10 @@ export function UpdatePasswordRestaurant() {
       handleRequestSuccess('Restaurante atualizado com sucesso!')
       navigate(-1)
     } catch (error) {
-      handleRequestError('')
+      handleRequestError(error)
       console.log(error)
+    } finally {
+      setSubmited(false)
     }
   }
   return (
@@ -111,21 +89,17 @@ export function UpdatePasswordRestaurant() {
                 <Input
                   name="username"
                   label="Email do gerente"
-                  value={restaurant.username}
-                  onChange={(e) =>
-                    setRestaurant({ ...restaurant, username: e.target.value })
-                  }
                   register={register}
                 />
               </SimpleGrid>
               <SimpleGrid>
-                <Input
+                <InputPassword
                   name="password"
                   label="Nova Senha"
                   register={register}
                   required={false}
                 />
-                <Input
+                <InputPassword
                   name="confirmPassword"
                   label="Confirme sua senha"
                   register={register}

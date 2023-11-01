@@ -9,12 +9,12 @@ import { useForm } from 'react-hook-form'
 import { api } from '../../../service/apiClient'
 import { useAppToast } from '../../../hooks/useAppToast'
 import { InputPassword } from '../../../components/Input/Password'
-import { useEffect } from 'react'
+import { useState } from 'react'
 
 const UpdateEmployeeValidationSchema = zod.object({
   name: zod.string().min(2, 'Informe a Categoria'),
-  password: zod.string().min(2, 'Informe a nova senha'),
-  confirmPassword: zod.string().min(2, 'Confirme sua senha'),
+  password: zod.string().optional(),
+  confirmPassword: zod.string().optional(),
 })
 
 export type UpdateEmployeeProps = zod.infer<
@@ -25,9 +25,14 @@ export function UpdateEmployee() {
   const navigate = useNavigate()
   const { handleRequestSuccess, handleRequestError } = useAppToast()
   const location = useLocation()
+  const [disable, setDisable] = useState<boolean>(false)
   const { employee } = location.state
 
-  const { register, handleSubmit } = useForm<UpdateEmployeeProps>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<UpdateEmployeeProps>({
     resolver: zodResolver(UpdateEmployeeValidationSchema),
     defaultValues: {
       name: employee.name,
@@ -35,14 +40,11 @@ export function UpdateEmployee() {
       confirmPassword: '',
     },
   })
-
-  useEffect(() => {
-    console.log(employee)
-  }, [])
+  console.log(errors)
 
   const handleUpdateEmployee = async (form: UpdateEmployeeProps) => {
     console.log(form, employee.name)
-
+    setDisable(true)
     try {
       const response = await api.put(`/restaurant-manager/${employee.id}`, form)
       if (response.status === 200) {
@@ -51,6 +53,8 @@ export function UpdateEmployee() {
       }
     } catch (error) {
       handleRequestError(error)
+    } finally {
+      setDisable(false)
     }
   }
 
@@ -63,13 +67,15 @@ export function UpdateEmployee() {
             name="password"
             label="Nova senha"
             register={register}
+            required={false}
           />
           <InputPassword
             name="confirmPassword"
             label="Confirmar senha"
+            required={false}
             register={register}
           />
-          <FormButton isDisable={false} buttonSubmitTitle="Editar" />
+          <FormButton isDisable={disable} buttonSubmitTitle="Editar" />
         </form>
       </CreateContent>
     </Box>

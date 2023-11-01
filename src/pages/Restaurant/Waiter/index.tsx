@@ -67,7 +67,7 @@ export function Waiter() {
       })
 
       if (response.status === 204) {
-        handleRequestSuccess('Colaborador removido com sucesso!')
+        handleRequestSuccess('Garçom removido com sucesso!')
         getAllWaiters()
       }
       console.log(restaurantSession)

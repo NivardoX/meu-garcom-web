@@ -9,6 +9,7 @@ import { Input } from '../../../components/Input'
 import { InputPassword } from '../../../components/Input/Password'
 import { useAppToast } from '../../../hooks/useAppToast'
 import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
 
 export type CreateEmployeeProps = {
   employeeName: string
@@ -30,17 +31,21 @@ const CreateCategoryValidationSchema = zod.object({
 export function CreateEmployee() {
   const navigate = useNavigate()
   const { handleRequestError, handleRequestSuccess } = useAppToast()
-  const { register, handleSubmit, watch, reset } = useForm<CreateEmployeeProps>(
-    {
-      resolver: zodResolver(CreateCategoryValidationSchema),
-      defaultValues: {
-        employeeName: '',
-        employeeUserName: '',
-        employeePassword: '',
-        employeeConfirmPassword: '',
-      },
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<CreateEmployeeProps>({
+    resolver: zodResolver(CreateCategoryValidationSchema),
+    defaultValues: {
+      employeeName: '',
+      employeeUserName: '',
+      employeePassword: '',
+      employeeConfirmPassword: '',
     },
-  )
+  })
 
   const observerContentForm = watch([
     'employeeName',
@@ -52,7 +57,13 @@ export function CreateEmployee() {
 
   const handleCreateEmployee = async ({ ...props }: CreateEmployeeProps) => {
     if (props.employeePassword !== props.employeeConfirmPassword) {
-      return handleRequestError('error', 'As senhas devem ser iguais')
+      return handleRequestError('', 'As senhas devem ser iguais')
+    }
+    if (props.employeePassword.length < 6) {
+      return handleRequestError(
+        '',
+        'As senhas devem ter no minimo 6 caracteres',
+      )
     }
     try {
       const response = await api.post('/restaurant-manager', {
@@ -70,6 +81,13 @@ export function CreateEmployee() {
       handleRequestError(error)
     }
   }
+  useEffect(() => {
+    if (errors) {
+      if (errors.employeeUserName) {
+        handleRequestError('', 'email Invalido!')
+      }
+    }
+  }, [errors])
   return (
     <Box w="100%">
       <CreateContent headingTitle="Criar Colaborador">

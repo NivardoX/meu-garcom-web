@@ -8,11 +8,21 @@ import {
   ChartItemsProperty,
 } from '../../../components/ChartItems/ChartItems'
 import Pagination from '../../../components/Pagination'
+import { useAppToast } from '../../../hooks/useAppToast'
 import { apiProvider } from '../../../service/apiProvider'
 
 type RestaurantProps = {
   name: string
   expiresAt: string
+}
+export type GetRestaurantProps = {
+  id: string
+  name: string
+  username: string
+  password: string
+  restaurantId: string
+  createdAt: string
+  isOwner: boolean
 }
 
 const chartProperty: ChartItemsProperty<RestaurantProps> = {
@@ -22,6 +32,7 @@ const chartProperty: ChartItemsProperty<RestaurantProps> = {
 
 export function Restaurant() {
   const [itemData, setItemData] = useState<RestaurantProps[]>([])
+  const { handleRequestError } = useAppToast()
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [totalItens, setTotalItens] = useState<number>(1)
   const navigate = useNavigate()
@@ -44,7 +55,22 @@ export function Restaurant() {
     navigate('update', { state: restaurant })
   }
   const handleOpenEditPasswordRestaurant = (restaurant: any) => {
-    navigate('updatePassword', { state: restaurant })
+    const handleGetRestaurant = async () => {
+      try {
+        const { data } = await apiProvider.get<GetRestaurantProps[]>(
+          '/restaurant-manager/all',
+        )
+        //  console.log(data.find((res: any) => res.restaurantId === product.id))
+        const res: GetRestaurantProps = data.find(
+          (res: GetRestaurantProps) => res.restaurantId === restaurant.id,
+        ) as GetRestaurantProps
+        navigate('updatePassword', { state: res })
+      } catch (error) {
+        handleRequestError(error)
+        navigate(-1)
+      }
+    }
+    handleGetRestaurant()
   }
   return (
     <Box w="100%" height={'100%'}>

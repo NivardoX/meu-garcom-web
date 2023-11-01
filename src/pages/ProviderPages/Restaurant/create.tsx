@@ -55,6 +55,9 @@ export function CreateRestaurant() {
   const handleCreateRestaurant = async ({
     ...props
   }: CreateRestaurantProps) => {
+    if (props.password !== props.restaurantConfirmPassword) {
+      return handleRequestError('', 'As senhas devem ser iguais!')
+    }
     const formData = new FormData()
     Object.entries(props).forEach((entry) => {
       const [key, value] = entry
@@ -83,7 +86,7 @@ export function CreateRestaurant() {
       navigate('/provider/restaurant')
     } catch (error) {
       console.log(error)
-      handleRequestError('')
+      handleRequestError(error)
       setSubmited(false)
     }
   }

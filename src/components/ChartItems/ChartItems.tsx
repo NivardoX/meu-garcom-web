@@ -33,6 +33,8 @@ export function ChartItems<T>(props: ChartItemsProps<T>) {
   ][]
 
   const chartValues = propValues.map(([key, value], index) => {
+    const date = new Date(String(props.data[key]))
+    date.setDate(date.getDate() + 1)
     return (
       <Td textColor="gray.300" fontWeight="bold" key={index}>
         {value.format === 'currency'
@@ -42,7 +44,7 @@ export function ChartItems<T>(props: ChartItemsProps<T>) {
             }).format(Number(props.data[key]) / 100)}`
           : `${
               value.format === 'date'
-                ? format(new Date(String(props.data[key])), 'dd/MM/yyyy')
+                ? format(date, 'dd/MM/yyyy')
                 : props.data[key]
             }`}
       </Td>

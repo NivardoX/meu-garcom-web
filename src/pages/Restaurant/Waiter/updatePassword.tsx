@@ -5,7 +5,7 @@ import * as zod from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { api } from '../../../service/apiClient'
 import { useAppToast } from '../../../hooks/useAppToast'
 import { InputPassword } from '../../../components/Input/Password'
@@ -24,6 +24,7 @@ export function UpdateWaiterPassWord() {
   const { handleRequestSuccess, handleRequestError } = useAppToast()
   const navigate = useNavigate()
   const location = useLocation()
+  const [disable, setDisable] = useState<boolean>(false)
   const { waiter } = location.state
 
   const { register, handleSubmit } = useForm<IUpdateWaiter>({
@@ -31,6 +32,13 @@ export function UpdateWaiterPassWord() {
   })
 
   const handleUpdateWaiter = async (form: IUpdateWaiter) => {
+    if (form.password.length < 6) {
+      return handleRequestError(
+        '',
+        'As senhas devem ter no minimo 6 caracteres',
+      )
+    }
+    setDisable(true)
     try {
       console.log(waiter.id)
       if (form.password === form.confirm) {
@@ -46,6 +54,8 @@ export function UpdateWaiterPassWord() {
       }
     } catch (error) {
       handleRequestError(error)
+    } finally {
+      setDisable(false)
     }
   }
 
@@ -67,7 +77,7 @@ export function UpdateWaiterPassWord() {
             label="Confirme a senha do garçom"
             register={register}
           />
-          <FormButton isDisable={false} buttonSubmitTitle="Editar" />
+          <FormButton isDisable={disable} buttonSubmitTitle="Editar" />
         </form>
       </CreateContent>
     </Box>

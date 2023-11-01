@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { api } from '../../../service/apiClient'
 import { useAppToast } from '../../../hooks/useAppToast'
+import { useState } from 'react'
 
 const UpdateCategoryValidationSchema = zod.object({
   name: zod.string().min(2, 'Informe a Categoria'),
@@ -20,6 +21,7 @@ export type UpdateCategoryProps = zod.infer<
 export function UpdateCategory() {
   const navigate = useNavigate()
   const { handleRequestSuccess, handleRequestError } = useAppToast()
+  const [disable, setDisable] = useState<boolean>(false)
   const location = useLocation()
   const { category } = location.state
 
@@ -32,10 +34,7 @@ export function UpdateCategory() {
 
   const handleUpdateCategory = async (form: UpdateCategoryProps) => {
     console.log(form, category.name)
-    if (form.name === category.name) {
-      return handleRequestError('error', 'Não houve mudança na categoria')
-    }
-
+    setDisable(true)
     try {
       const response = await api.put(`/categories/${category.id}`, form)
       if (response.status === 200) {
@@ -44,6 +43,8 @@ export function UpdateCategory() {
       }
     } catch (error) {
       handleRequestError(error)
+    } finally {
+      setDisable(false)
     }
   }
 
@@ -52,7 +53,7 @@ export function UpdateCategory() {
       <CreateContent headingTitle="Editar Categoria" size="small">
         <form onSubmit={handleSubmit(handleUpdateCategory)}>
           <Input name="name" label="Nome da Categoria" register={register} />
-          <FormButton isDisable={false} buttonSubmitTitle="Editar" />
+          <FormButton isDisable={disable} buttonSubmitTitle="Editar" />
         </form>
       </CreateContent>
     </Box>

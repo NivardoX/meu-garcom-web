@@ -6,7 +6,7 @@ import * as zod from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { api } from '../../../service/apiClient'
 import { useAppToast } from '../../../hooks/useAppToast'
 import { useAuth } from '../../../hooks/useAuth'
@@ -18,17 +18,22 @@ interface IUpdateWaiter {
 
 const UpdateWaiterValidationSchema = zod.object({
   name: zod.string().min(1, 'Editar Nome'),
-  username: zod.string().min(1, 'Informe o nove Email'),
+  username: zod.string().min(1, 'Informe o nove Email').email(),
 })
 
 export function UpdateWaiter() {
   const { handleRequestSuccess, handleRequestError } = useAppToast()
+  const [disable, setDisable] = useState<boolean>(false)
   const navigate = useNavigate()
   const location = useLocation()
   const { waiter } = location.state
   const { restaurantSession } = useAuth()
 
-  const { register, handleSubmit } = useForm<IUpdateWaiter>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IUpdateWaiter>({
     resolver: zodResolver(UpdateWaiterValidationSchema),
     defaultValues: {
       name: waiter.name,
@@ -37,9 +42,8 @@ export function UpdateWaiter() {
   })
 
   const handleUpdateWaiter = async (form: IUpdateWaiter) => {
+    setDisable(true)
     try {
-      console.log(waiter.id)
-
       const response = await api.put(`/waiters/${waiter.id}`, {
         name: form.name,
         username: form.username,
@@ -51,12 +55,18 @@ export function UpdateWaiter() {
       navigate('/restaurant/waiter')
     } catch (error) {
       handleRequestError(error)
+    } finally {
+      setDisable(false)
     }
   }
 
   useEffect(() => {
-    console.log('waiter', waiter)
-  }, [])
+    if (errors) {
+      if (errors.username) {
+        handleRequestError('', 'email Invalido!')
+      }
+    }
+  }, [errors])
 
   return (
     <Box w="100%">
@@ -72,7 +82,7 @@ export function UpdateWaiter() {
             label="Editar nome do garçom"
             register={register}
           />
-          <FormButton isDisable={false} buttonSubmitTitle="Editar" />
+          <FormButton isDisable={disable} buttonSubmitTitle="Editar" />
         </form>
       </CreateContent>
     </Box>

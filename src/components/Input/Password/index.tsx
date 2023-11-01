@@ -28,7 +28,6 @@ export function InputPassword({
 }: InputPasswordProps) {
   const [show, setShow] = useState(false)
   const handleClick = () => setShow(!show)
-  console.log(props.name)
 
   return (
     <FormControl>

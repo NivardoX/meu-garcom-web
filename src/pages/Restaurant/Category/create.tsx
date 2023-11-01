@@ -8,9 +8,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as zod from 'zod'
 import { useAppToast } from '../../../hooks/useAppToast'
 import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 
 const CreateCategoryValidationSchema = zod.object({
-  name: zod.string().min(2, 'Informe a Categoria'),
+  name: zod.string().min(1, 'Informe a Categoria'),
 })
 
 export type CreateCategoryProps = zod.infer<
@@ -20,21 +21,18 @@ export type CreateCategoryProps = zod.infer<
 export const CreateCategory: React.FC = () => {
   const navigate = useNavigate()
   const { handleRequestError, handleRequestSuccess } = useAppToast()
-  const { register, handleSubmit, watch, reset } = useForm<CreateCategoryProps>(
-    {
-      resolver: zodResolver(CreateCategoryValidationSchema),
-      defaultValues: {
-        name: '',
-      },
+  const [disable, setDisable] = useState<boolean>(false)
+  const { register, handleSubmit, reset } = useForm<CreateCategoryProps>({
+    resolver: zodResolver(CreateCategoryValidationSchema),
+    defaultValues: {
+      name: '',
     },
-  )
-
-  const observerContentForm: string = watch('name')
-  const isSubmitDisabled: boolean = !observerContentForm
+  })
 
   const handlecreateCategory = async (
     props: CreateCategoryProps,
   ): Promise<void> => {
+    setDisable(true)
     try {
       const response = await api.post('/categories', {
         name: props.name,
@@ -48,6 +46,8 @@ export const CreateCategory: React.FC = () => {
       navigate('/restaurant/category')
     } catch (error) {
       handleRequestError(error)
+    } finally {
+      setDisable(false)
     }
   }
 
@@ -61,7 +61,7 @@ export const CreateCategory: React.FC = () => {
             placeHolder="Informe o nome da categoria"
             register={register}
           />
-          <FormButton isDisable={isSubmitDisabled} />
+          <FormButton isDisable={disable} />
         </form>
       </CreateContent>
     </Box>

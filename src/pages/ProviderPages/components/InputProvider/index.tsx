@@ -2,7 +2,7 @@ import {
   Input as ChakraInput,
   InputProps as ChakraInputProps,
 } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { UseFormRegister } from 'react-hook-form'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
 
@@ -14,9 +14,6 @@ interface InputProps extends ChakraInputProps {
 
 export function Input(props: InputProps) {
   const [type, setType] = useState<string>(props.type)
-  useEffect(() => {
-    console.log(props)
-  }, [])
   const handleClick = () => {
     if (type === 'password') {
       setType('text')
