@@ -79,7 +79,7 @@ export function UpdateWaiter() {
           />
           <Input
             name="username"
-            label="Editar nome do garçom"
+            label="Editar Email do garçom"
             register={register}
           />
           <FormButton isDisable={disable} buttonSubmitTitle="Editar" />
