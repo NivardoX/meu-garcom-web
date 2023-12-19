@@ -11,7 +11,7 @@ import { useAppToast } from '../../../hooks/useAppToast'
 import { useState } from 'react'
 
 const UpdateCategoryValidationSchema = zod.object({
-  name: zod.string().min(2, 'Informe a Categoria'),
+  name: zod.string().min(1, 'Informe a Categoria'),
 })
 
 export type UpdateCategoryProps = zod.infer<
@@ -34,6 +34,12 @@ export function UpdateCategory() {
 
   const handleUpdateCategory = async (form: UpdateCategoryProps) => {
     console.log(form, category.name)
+    if (form.name.length < 2) {
+      return handleRequestError(
+        '',
+        'As categoria deve ter no minimo 2 caracteres',
+      )
+    }
     setDisable(true)
     try {
       const response = await api.put(`/categories/${category.id}`, form)

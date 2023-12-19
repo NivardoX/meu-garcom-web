@@ -27,7 +27,7 @@ export type RestaurantProps = {
 }
 
 const CreateRestaurantValidationSchema = zod.object({
-  username: zod.string().email(),
+  username: zod.string().min(1, 'Digite o novo Email'),
   password: zod.string().optional(),
   confirmPassword: zod.string().optional(),
 })
@@ -72,7 +72,10 @@ export function UpdatePasswordRestaurant() {
       reset()
       handleRequestSuccess('Restaurante atualizado com sucesso!')
       navigate(-1)
-    } catch (error) {
+    } catch (error: any) {
+      if (error.response.data.message[0] === 'username must be an email') {
+        return handleRequestError('', 'Digite um email valido')
+      }
       handleRequestError(error)
       console.log(error)
     } finally {

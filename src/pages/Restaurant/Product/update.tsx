@@ -44,7 +44,6 @@ const UpdateProductValidationSchema = zod.object({
   priceInCents: zod.string().min(1, 'Informe o Preco'),
   description: zod.string().min(1, 'Informe a Categoria'),
   estimatedMinutesToPrepare: zod.string().optional(),
-  isAvailable: zod.boolean().optional(),
   availableAmount: zod.string().optional() || zod.number().optional(),
 })
 
@@ -56,7 +55,6 @@ export function UpdateProduct() {
   const { handleRequestError, handleRequestSuccess } = useAppToast()
   const [productImage, setProductImage] = useState<File | undefined>(undefined)
   const [disable, setDisable] = useState<boolean>(false)
-  const [aviable, setAviable] = useState<boolean>(false)
   const product = location.state as ProductsResponse['products'][0]
   const [categories, setCategories] = useState<CategoryResponse[]>([])
   const { restaurantSession } = useAuth()
@@ -66,9 +64,16 @@ export function UpdateProduct() {
   const [storageCategory, setStorageCategory] = useState<string>(
     product.product.availabilityType === 'QUANTITY' ? '1' : '2',
   )
+  const [aviableCategory, setAviableCategory] = useState<string>(
+    product.product.isAvailable ? '1' : '2',
+  )
   const [categoriesStorage] = useState<CategoryStorage[]>([
     { name: 'Quantidade', id: '1' },
     { name: 'Disponibilidade', id: '2' },
+  ])
+  const [categoriesAviable] = useState<CategoryStorage[]>([
+    { name: 'Disponivel', id: '1' },
+    { name: 'Não Disponivel', id: '2' },
   ])
 
   const { register, handleSubmit, reset } = useForm<UpdateProductProps>({
@@ -85,7 +90,6 @@ export function UpdateProduct() {
       estimatedMinutesToPrepare:
         product.product.estimatedMinutesToPrepare.toString() || '',
       availableAmount: product.product.availableAmount.toString() || '',
-      isAvailable: product.product.isAvailable,
     },
   })
 
@@ -144,6 +148,13 @@ export function UpdateProduct() {
       formData.append('availabilityType', `QUANTITY`)
     } else {
       formData.append('availabilityType', `AVAILABILITY`)
+      if (aviableCategory === '1') {
+        formData.append('isAvailable', String(true))
+        console.log(String(true))
+      } else {
+        formData.append('isAvailable', String(false))
+        console.log(String(false))
+      }
     }
 
     try {
@@ -177,9 +188,6 @@ export function UpdateProduct() {
   useEffect(() => {
     console.log(product.product)
     getAllCategories()
-    if (product.product.availabilityType === 'QUANTITY') {
-      setAviable(true)
-    }
   }, [])
 
   return (
@@ -208,13 +216,24 @@ export function UpdateProduct() {
           label="Tempo estimado para o preparo"
           register={register}
         />
-        {aviable ? (
+        {storageCategory === '1' ? (
           <Input
             name="availableAmount"
             label="Quantidade disponível"
             register={register}
           />
-        ) : null}
+        ) : (
+          <Select
+            name="isAvailable"
+            label="Está Disponivel?:"
+            register={register}
+            category={categoriesAviable}
+            value={aviableCategory}
+            onChange={(event) => {
+              setAviableCategory(event.target.value)
+            }}
+          />
+        )}
         <Select
           name="categoryId"
           label="Categoria do Produto:"
@@ -232,7 +251,6 @@ export function UpdateProduct() {
           category={categoriesStorage}
           value={storageCategory}
           onChange={(event) => {
-            setAviable(!aviable)
             setStorageCategory(event.target.value)
           }}
         />

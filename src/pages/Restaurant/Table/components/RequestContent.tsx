@@ -1,7 +1,7 @@
 import { Box, HStack, VStack, Text } from '@chakra-ui/react'
 import { ProductImage } from './ProductImage'
 import { RequestStatus } from '../../../../@types/Restaurant/order'
-import exampleFood from '../../../../assets/placeholder.png'
+import exampleFood from '../../../../assets/noimage.png'
 
 type RequestContentProps = {
   requestProductName: string

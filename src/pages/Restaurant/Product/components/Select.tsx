@@ -1,9 +1,9 @@
 import { Select as ChakraSelect, FormLabel, Tooltip } from '@chakra-ui/react'
-import { CategoryResponse } from '../../Category'
+import { CategoryResponse, CategoryStorage } from '../../Category'
 import { UseFormRegister } from 'react-hook-form'
 
 interface SelectProps {
-  category: CategoryResponse[]
+  category: CategoryResponse[] | CategoryStorage[]
   name: string
   value?: string
   label?: string

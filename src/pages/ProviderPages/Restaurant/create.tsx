@@ -25,14 +25,14 @@ const CreateRestaurantValidationSchema = zod.object({
   restaurantName: zod.string().min(1, 'Informe a categoria do produto'),
   managerName: zod.string().min(1, 'Informe o preço do produto'),
   username: zod.string().min(1, 'Informe a descrição do produto'),
-  password: zod.string().min(6, 'Informe a descrição do produto'),
+  password: zod.string().min(1, 'Informe a descrição do produto'),
   restaurantConfirmPassword: zod.string().min(1, 'Informe o preço do produto'),
   expiresAt: zod.string().min(1, 'Informe a Categoria'),
 })
 
 export function CreateRestaurant() {
   const [submited, setSubmited] = useState<boolean>(false)
-  const [maxTables, setMaxTables] = useState()
+  const [maxTables, setMaxTables] = useState('')
   const { handleRequestError, handleRequestSuccess } = useAppToast()
   const [productImage, setProductImage] = useState<File | undefined>(undefined)
 
@@ -55,8 +55,20 @@ export function CreateRestaurant() {
   const handleCreateRestaurant = async ({
     ...props
   }: CreateRestaurantProps) => {
+    if (props.password.length < 6) {
+      return handleRequestError(
+        '',
+        'As senhas devem ter no minimo 6 caracteres',
+      )
+    }
     if (props.password !== props.restaurantConfirmPassword) {
       return handleRequestError('', 'As senhas devem ser iguais!')
+    }
+    if (Number(maxTables) <= 0) {
+      return handleRequestError('', 'O Numero de mesas deve ser maior que 0')
+    }
+    if (Number(maxTables) > 100) {
+      return handleRequestError('', 'O Numero de mesas deve ser no máximo 100')
     }
     const formData = new FormData()
     Object.entries(props).forEach((entry) => {
@@ -84,9 +96,13 @@ export function CreateRestaurant() {
       handleRequestSuccess('Restaurante atualizado com sucesso!')
       reset()
       navigate('/provider/restaurant')
-    } catch (error) {
-      console.log(error)
+    } catch (error: any) {
+      console.log(error.response.data.message[0])
+      if (error.response.data.message[0] === 'username must be an email') {
+        return handleRequestError('', 'Digite um email valido')
+      }
       handleRequestError(error)
+    } finally {
       setSubmited(false)
     }
   }
