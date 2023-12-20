@@ -1,8 +1,9 @@
-import { Tbody, Td, Tr, Button, Icon } from '@chakra-ui/react'
+import { Tbody, Td, Tr, Button, Icon, Text } from '@chakra-ui/react'
 import { RiPencilLine, RiEyeFill } from 'react-icons/ri'
 import { FaClock, FaRegTrashAlt } from 'react-icons/fa'
 import { format } from 'date-fns'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { Modal } from '../Modal'
 
 type ChartItemsFormat = {
   label: string
@@ -26,6 +27,7 @@ type ChartItemsProps<T> = {
 }
 
 export function ChartItems<T>(props: ChartItemsProps<T>) {
+  const [isModalOpen, setIsModalOpen] = useState(false)
   useEffect(() => {}, [])
   const propValues = Object.entries(props.values) as [
     keyof T,
@@ -51,61 +53,77 @@ export function ChartItems<T>(props: ChartItemsProps<T>) {
     )
   })
   return (
-    <Tbody>
-      <Tr>
-        <Td px="6"></Td>
-        {chartValues}
-        <Td>
-          <Button
-            as="a"
-            size="sm"
-            fontSize="sm"
-            colorScheme="green"
-            leftIcon={<Icon as={RiPencilLine} fontSize="18" />}
-            onClick={props.onEdit}
-          >
-            Editar
-          </Button>
-          {props.password && (
+    <>
+      <Tbody>
+        <Tr>
+          <Td px="6"></Td>
+          {chartValues}
+          <Td>
             <Button
               as="a"
               size="sm"
               fontSize="sm"
-              colorScheme="blue"
-              leftIcon={<Icon as={RiEyeFill} color="white" fontSize="18" />}
-              marginLeft={2}
-              onClick={props.onPassword}
+              colorScheme="green"
+              leftIcon={<Icon as={RiPencilLine} fontSize="18" />}
+              onClick={props.onEdit}
             >
-              Senha
+              Editar
             </Button>
-          )}
-          {props.expires ? (
-            <Button
-              as="a"
-              size="sm"
-              fontSize="sm"
-              colorScheme="orange"
-              leftIcon={<Icon as={FaClock} color="white" fontSize="18" />}
-              marginLeft={2}
-              onClick={props.onExpires}
-            >
-              Expiração
-            </Button>
-          ) : (
-            <Button
-              as="a"
-              size="sm"
-              fontSize="sm"
-              colorScheme="red"
-              leftIcon={<Icon as={FaRegTrashAlt} color="white" fontSize="18" />}
-              marginLeft={2}
-              onClick={props.onRemove}
-            >
-              Excluir
-            </Button>
-          )}
-        </Td>
-      </Tr>
-    </Tbody>
+            {props.password && (
+              <Button
+                as="a"
+                size="sm"
+                fontSize="sm"
+                colorScheme="blue"
+                leftIcon={<Icon as={RiEyeFill} color="white" fontSize="18" />}
+                marginLeft={2}
+                onClick={props.onPassword}
+              >
+                Senha
+              </Button>
+            )}
+            {props.expires ? (
+              <Button
+                as="a"
+                size="sm"
+                fontSize="sm"
+                colorScheme="orange"
+                leftIcon={<Icon as={FaClock} color="white" fontSize="18" />}
+                marginLeft={2}
+                onClick={props.onExpires}
+              >
+                Expiração
+              </Button>
+            ) : (
+              <Button
+                as="a"
+                size="sm"
+                fontSize="sm"
+                colorScheme="red"
+                leftIcon={
+                  <Icon as={FaRegTrashAlt} color="white" fontSize="18" />
+                }
+                marginLeft={2}
+                onClick={() => setIsModalOpen(true)}
+              >
+                Excluir
+              </Button>
+            )}
+          </Td>
+        </Tr>
+      </Tbody>
+      <Modal
+        isOpen={isModalOpen}
+        title="Dejeja excluir?"
+        onClose={() => setIsModalOpen(false)}
+        onClick={props.onRemove}
+        buttonTitle="Excluir"
+        color="red"
+      >
+        <Text color="black" fontWeight="bold">
+          Essa ação é irreversivel
+        </Text>
+      </Modal>
+    </>
   )
 }

@@ -12,7 +12,7 @@ import { InputPassword } from '../../../components/Input/Password'
 import { useState } from 'react'
 
 const UpdateEmployeeValidationSchema = zod.object({
-  name: zod.string().min(2, 'Informe a Categoria'),
+  name: zod.string().min(1, 'Informe a Categoria'),
   password: zod.string().optional(),
   confirmPassword: zod.string().optional(),
 })
@@ -44,6 +44,15 @@ export function UpdateEmployee() {
 
   const handleUpdateEmployee = async (form: UpdateEmployeeProps) => {
     console.log(form, employee.name)
+    if (form.password && form.password.length < 6 && form.password.length > 0) {
+      return handleRequestError(
+        '',
+        'As senhas devem ter no minimo 6 caracteres',
+      )
+    }
+    if (form.password !== form.confirmPassword) {
+      return handleRequestError('', 'As senhas devem ser iguais!')
+    }
     setDisable(true)
     try {
       const response = await api.put(`/restaurant-manager/${employee.id}`, form)

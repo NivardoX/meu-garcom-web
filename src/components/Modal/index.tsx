@@ -16,6 +16,7 @@ type ModalProps = {
   description?: string
   children?: ReactNode
   buttonTitle?: string
+  color?: string
   onClick?: () => void
   onOpen?: () => void
   onClose: () => void
@@ -37,19 +38,35 @@ export function Modal(props: ModalProps) {
           </ModalBody>
 
           <ModalFooter>
-            {props.buttonTitle !== 'Fechar' && (
-              <Button colorScheme="green" mr={3} onClick={props.onClick}>
-                {props.buttonTitle || 'Criar'}
-              </Button>
-            )}
+            {props.buttonTitle !== 'Fechar'
+              ? props.buttonTitle !== 'Escolher Depois' && (
+                  <Button
+                    colorScheme={props.color ? props.color : 'green'}
+                    mr={3}
+                    onClick={props.onClick}
+                  >
+                    {props.buttonTitle || 'Criar'}
+                  </Button>
+                )
+              : null}
             {props.buttonTitle !== 'Fechar' ? (
-              <Button
-                colorScheme="orange"
-                color={'#fff'}
-                onClick={props.onClose}
-              >
-                Cancelar
-              </Button>
+              props.buttonTitle === 'Escolher Depois' ? (
+                <Button
+                  colorScheme="orange"
+                  color={'#fff'}
+                  onClick={props.onClose}
+                >
+                  {props.buttonTitle}
+                </Button>
+              ) : (
+                <Button
+                  colorScheme="orange"
+                  color={'#fff'}
+                  onClick={props.onClose}
+                >
+                  Cancelar
+                </Button>
+              )
             ) : (
               <Button
                 colorScheme="orange"

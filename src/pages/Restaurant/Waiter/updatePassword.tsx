@@ -16,8 +16,8 @@ interface IUpdateWaiter {
 }
 
 const UpdateWaiterValidationSchema = zod.object({
-  password: zod.string().min(6, 'Nova senha'),
-  confirm: zod.string().min(6, 'confirme sua senha'),
+  password: zod.string().min(1, 'Nova senha'),
+  confirm: zod.string().min(1, 'confirme sua senha'),
 })
 
 export function UpdateWaiterPassWord() {
@@ -32,6 +32,9 @@ export function UpdateWaiterPassWord() {
   })
 
   const handleUpdateWaiter = async (form: IUpdateWaiter) => {
+    if (form.password !== form.confirm) {
+      return handleRequestError('', 'As senhas devem ser iguais!')
+    }
     if (form.password.length < 6) {
       return handleRequestError(
         '',

@@ -52,7 +52,13 @@ export function ImageInput({ url, ...props }: ImageInputProps) {
         }}
       />
       {preview ? (
-        <Image src={preview} alt="Imagem do Produto" />
+        <Image
+          src={preview}
+          alt="Imagem do Produto"
+          maxW={500}
+          maxH={500}
+          marginTop={8}
+        />
       ) : (
         <Box
           bgColor="gray.900"

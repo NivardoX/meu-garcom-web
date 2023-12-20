@@ -46,6 +46,7 @@ export function CreateProduct() {
   const [productImage, setProductImage] = useState<File | undefined>(undefined)
   const [selectedCategory, setSelectedCategory] = useState<string>('')
   const [storageCategory, setStorageCategory] = useState<string>('2')
+  const [availableAmount, setAvailableAmount] = useState<number>(1)
   const { restaurantSession } = useAuth()
 
   const { register, handleSubmit, reset } = useForm<ICreateProduct>({
@@ -67,8 +68,9 @@ export function CreateProduct() {
 
     Object.entries(form).forEach((entry) => {
       const [key, value] = entry
+      console.log(key, value)
 
-      formData.append(key, value)
+      formData.append(key, String(value))
     })
     formData.append('categoryId', selectedCategory)
     if (form.priceInCents === '000') {
@@ -81,6 +83,11 @@ export function CreateProduct() {
     }
     if (productImage) {
       formData.append('image', productImage)
+    }
+    if (availableAmount > 0) {
+      formData.append('availableAmount', String(availableAmount))
+    } else {
+      formData.append('availableAmount', String(1))
     }
     if (storageCategory === '1') {
       formData.append('availabilityType', `QUANTITY`)
@@ -169,7 +176,16 @@ export function CreateProduct() {
             label="Tempo estimado para o preparo"
             register={register}
           />
-
+          {storageCategory === '1' && (
+            <Input
+              type="number"
+              name="availableAmount"
+              placeHolder="Quantidade disponível"
+              label="Quantidade disponível"
+              register={register}
+              onChange={(e) => setAvailableAmount(Number(e.target.value))}
+            />
+          )}
           <Select
             name="categoryId"
             label="Categoria do Produto:"

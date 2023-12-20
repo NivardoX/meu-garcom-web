@@ -7,7 +7,7 @@ import { useAppToast } from '../../../hooks/useAppToast'
 import { useState, useEffect } from 'react'
 import QRCode from 'qrcode.react'
 import { Modal } from '../../../components/Modal'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Accordion } from './components/Accordion'
 import { ButtonStatusOrder } from './components/ButtonStatusOrder'
 import { RequestContent } from './components/RequestContent'
@@ -17,6 +17,7 @@ import { EmptyState } from '../../../components/EmptyState'
 import { RxDashboard, RxPerson } from 'react-icons/rx'
 import { useAuth } from '../../../hooks/useAuth'
 import { OrderProducts } from '../../../@types/Restaurant/orderProducts'
+import { Order } from '../../../@types/Restaurant/order'
 
 type TableOrderProps = {
   tableId: Table['id']
@@ -31,6 +32,7 @@ type WaiterProps = {
 export function TableOrder() {
   const { handleRequestSuccess, handleRequestError } = useAppToast()
   const location = useLocation()
+  const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [session, setSession] = useState<boolean>(false)
   const [isModalPaymentOpen, setIsModalPaymentOpen] = useState<boolean>(false)
@@ -39,6 +41,7 @@ export function TableOrder() {
   const { tables, fetchAllTables } = useTables()
   const { restaurantSession } = useAuth()
   const [waiter, setWaiter] = useState<WaiterProps[]>([])
+  const [orders, setOrders] = useState<Order[]>([] as Order[])
 
   const table = tables.find((table) => table.id === tableId)
   if (!table) {
@@ -100,6 +103,7 @@ export function TableOrder() {
       )
       if (response.status === 200) {
         handleRequestSuccess('Mesa removida!')
+        navigate(-1)
       }
     } catch (error: any) {
       console.log(error)
@@ -131,6 +135,7 @@ export function TableOrder() {
       setIsModalPaymentOpen(true)
     }
     if (table?.tableSession) {
+      setOrders(table.tableSession?.orders.reverse())
       setSession(true)
     } else {
       setSession(false)
@@ -159,39 +164,37 @@ export function TableOrder() {
             }
           />
         ) : (
-          table.tableSession?.orders
-            .reverse()
-            .map((order: any, orderIndex: any) => {
-              const status = order.status
+          orders.map((order: any, orderIndex: any) => {
+            const status = order.status
 
-              return (
-                <Accordion
-                  key={orderIndex}
-                  title={`Pedido #${order.id}`}
-                  status={status}
-                >
-                  {order.products.map(
-                    (product: OrderProducts, productIndex: number) => {
-                      return (
-                        <RequestBox key={productIndex}>
-                          <RequestContent
-                            requestProductName={product.name}
-                            requestProductStatus={product.status}
-                            requestProductImage={product.imageUrl}
-                            requestProductNumber={product.amount}
-                          />
-                          <ButtonStatusOrder
-                            requestStatus={product.status}
-                            productId={product.id}
-                            orderId={order.id}
-                          />
-                        </RequestBox>
-                      )
-                    },
-                  )}
-                </Accordion>
-              )
-            })
+            return (
+              <Accordion
+                key={orderIndex}
+                title={`Pedido #${order.id}`}
+                status={status}
+              >
+                {order.products.map(
+                  (product: OrderProducts, productIndex: number) => {
+                    return (
+                      <RequestBox key={productIndex}>
+                        <RequestContent
+                          requestProductName={product.name}
+                          requestProductStatus={product.status}
+                          requestProductImage={product.imageUrl}
+                          requestProductNumber={product.amount}
+                        />
+                        <ButtonStatusOrder
+                          requestStatus={product.status}
+                          productId={product.id}
+                          orderId={order.id}
+                        />
+                      </RequestBox>
+                    )
+                  },
+                )}
+              </Accordion>
+            )
+          })
         )}
         {table.waiterId === null && (
           <VStack mt={25}>
