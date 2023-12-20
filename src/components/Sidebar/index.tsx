@@ -20,7 +20,7 @@ export function SideBar() {
       <SideBarLogoImage src={LogoImage} />
       <SideBarOptionContent to="/restaurant/table">
         <RxDashboard size={33} color="#D1D2DC" />
-        <SideBarName>MESÃO</SideBarName>
+        <SideBarName>MESAS</SideBarName>
       </SideBarOptionContent>
 
       <SideBarOptionContent to="/restaurant/product">
