@@ -13,7 +13,7 @@ export function setupAPIClient() {
   const token = Cookies.get('meu-garcom-web.token')
   const api = axios.create({
     // 'http://localhost:3333',
-    baseURL: 'https://api.meugarcon.com.br/',
+    baseURL: 'https://as3afmxgv3.us-east-1.awsapprunner.com',
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -82,10 +82,10 @@ export function setupAPIClient() {
 export function setupAPIProvider() {
   const token = Cookies.get('meu-garcom-web.provider.token')
 
-  console.log('token => ', token)
+  console.log('token  => ', token)
   const api = axios.create({
     // 'http://localhost:3333',
-    baseURL: 'https://api.meugarcon.com.br/',
+    baseURL: 'https://as3afmxgv3.us-east-1.awsapprunner.com',
     headers: {
       Authorization: `Bearer ${token}`,
     },
