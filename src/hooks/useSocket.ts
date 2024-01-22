@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import io, { Socket } from 'socket.io-client'
 import { TableSession } from '../@types/Restaurant/tableSession'
 
-const DEFAULT_URL =  'https://api.meugarcon.com.br/'
+const DEFAULT_URL =  'https://as3afmxgv3.us-east-1.awsapprunner.com'
 
  // 'http://localhost:3333'
 
