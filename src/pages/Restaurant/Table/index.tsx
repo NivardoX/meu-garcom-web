@@ -138,6 +138,8 @@ export function Table() {
         ) : (
           <Flex flexWrap="wrap" gap="20px">
             {tables.map((table, tableIndex) => {
+              console.log('Table => ', table, tableIndex);
+              
               return (
                 <TableComponent
                   key={tableIndex}
@@ -184,7 +186,7 @@ export function Table() {
       </Modal>
       <Modal
         isOpen={isModalWaiterOpen}
-        title={`Escolha o Garçom responsável`}
+        title={`Escolha o Garçom responsável pela mesa`}
         onClose={() => setIsModalWaiterOpen(false)}
         buttonTitle="Escolher Depois"
         onClick={() => setIsModalWaiterOpen(false)}

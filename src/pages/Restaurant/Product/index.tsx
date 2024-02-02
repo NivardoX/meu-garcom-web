@@ -76,7 +76,7 @@ export function Product() {
       const response = await api.get<GetProductsResponse>(
         `/products?page=${currentPage}`,
       )
-      console.log(response)
+      console.log('aaa =>', response)
       setTotalItens(response.data.matchCount)
 
       const products: ProductProps[] = response.data.products.map((product) => {

@@ -5,7 +5,7 @@ import {
   SideBarOptionContent,
   ExitButton,
 } from './styles'
-import LogoImage from '../../../../assets/Logo.svg'
+import LogoImage from '../../../../assets/LogoBg.png'
 import { IoRestaurantOutline } from 'react-icons/io5'
 import { VscWarning } from 'react-icons/vsc'
 import { IoIosLogOut } from 'react-icons/io'
