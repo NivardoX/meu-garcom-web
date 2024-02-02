@@ -72,7 +72,7 @@ export function CreateEmployee() {
         password: props.employeePassword,
       })
       if (response.status === 201) {
-        handleRequestSuccess('Novo garçom criado!')
+        handleRequestSuccess('Novo Colaborador criado!')
       }
 
       reset()

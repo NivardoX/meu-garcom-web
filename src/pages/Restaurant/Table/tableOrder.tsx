@@ -50,11 +50,11 @@ export function TableOrder() {
 
   async function getAllWaiters() {
     try {
-      console.log(restaurantSession)
-
+      
       const response = await api.get<WaiterProps[]>(
         `/restaurant-manager/waiters/${restaurantSession?.restaurantId}`,
-      )
+        )
+        console.log('',response)
       const waiters: WaiterProps[] = response.data
       setWaiter(waiters)
     } catch (error) {
@@ -149,6 +149,8 @@ export function TableOrder() {
         hasCreateButton={false}
         openModal={() => setIsModalOpen(true)}
         onPress={handleRemoveTable}
+        session={table?.tableSession?.id ? true : false }
+        goBack
       >
         {!table.tableSession && !session ? (
           <EmptyState

@@ -39,7 +39,7 @@ export const CreateCategory: React.FC = () => {
       })
 
       if (response.status === 201) {
-        handleRequestSuccess('Novo garçom criado!')
+        handleRequestSuccess('Nova Categoria criada!')
       }
 
       reset()

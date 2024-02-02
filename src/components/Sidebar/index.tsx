@@ -40,7 +40,7 @@ export function SideBar() {
 
       <SideBarOptionContent to="/restaurant/employee">
         <RxPerson size={33} color="#D1D2DC" />
-        <SideBarName>FUNCIONARIOS</SideBarName>
+        <SideBarName>COLABORADORES</SideBarName>
       </SideBarOptionContent>
 
       <ExitButton
